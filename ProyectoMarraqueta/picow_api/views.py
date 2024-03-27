@@ -1,3 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
-# Create your views here.
+
+def recv():
+    pass
+
+
+def auth_user():
+    pass
+
+
+def controller():
+    pass
+
