@@ -1,3 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
-# Create your views here.
+
+def user_view():
+    pass
+
+
+def user_register():
+    pass
+
+
+def guard_view():
+    pass
