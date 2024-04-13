@@ -56,7 +56,7 @@ class BicycleHolder(models.Model):
         super().save(*args, **kwargs)
         
         """
-            This segment here, adds or deletes BicycleHolder slots when saving the instance.
+            This code below, adds or deletes BicycleHolder slots when saving the instance.
         """
         if len(self.slots) == 0:
             for i in range(self.capacity):
@@ -68,6 +68,25 @@ class BicycleHolder(models.Model):
                     self.slots.append(0)
             else:
                 self.slots = self.slots[:self.capacity]
+
+
+    @classmethod
+    def add_bicycle(cls, Bicycle):
+        """Add a bicycle instance to the slots arr
+
+        Args:
+            Bicycle (_core.Bicycle_): instance of core.Bicycle model
+
+        Returns:
+            Bool: 0 if succes; 1 if Bicycle is not instance of core.Bicycle
+        """
+
+        if Bicycle.isinstance(Bicycle):
+            empty_place = cls.slots.index(0)
+            cls.slots[empty_place] = Bicycle
+            return False
+        else:
+            return True
 
 
     BUILDING_SJ_CHOICES = {
@@ -83,8 +102,8 @@ class BicycleHolder(models.Model):
     nearest_building = models.CharField("Nearest building", max_length=1, choices=BUILDING_SJ_CHOICES)
     nearest_guard = models.ForeignKey("Guard", on_delete=models.CASCADE, null=True, default=None)
 
+
 class KeyChain(models.Model):
     uuid = models.PositiveBigIntegerField("UUID", default=None, null=True)
     user = models.ForeignKey("BicyUser", on_delete=models.CASCADE)
-
 
