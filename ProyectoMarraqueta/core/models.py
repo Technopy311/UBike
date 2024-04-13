@@ -72,7 +72,7 @@ class BicycleHolder(models.Model):
 
     @classmethod
     def add_bicycle(cls, Bicycle):
-        """Add a bicycle instance to the slots arr
+        """Add a bicycle instance's PK to the slots arr
 
         Args:
             Bicycle (_core.Bicycle_): instance of core.Bicycle model
@@ -83,7 +83,7 @@ class BicycleHolder(models.Model):
 
         if Bicycle.isinstance(Bicycle):
             empty_place = cls.slots.index(0)
-            cls.slots[empty_place] = Bicycle
+            cls.slots[empty_place] = Bicycle.pk
             return False
         else:
             return True
