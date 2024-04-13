@@ -1,7 +1,12 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+
+#class BicyUser(AbstractUser):#userbastrac
+    #inherits Django User
+    #pass
 
 class BicyUser(models.Model):
-    #inherits Django User
+    #dummy Model
     pass
 
 
@@ -46,6 +51,25 @@ class Guard(models.Model):
 
 
 class BicycleHolder(models.Model):
+    
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        
+        """
+            This segment here, adds or deletes BicycleHolder slots when saving the instance.
+        """
+        if len(self.slots) == 0:
+            for i in range(self.capacity):
+                self.slots.append(0)
+        else:
+            delta_capacity = self.capacity - len(self.slots)
+            if delta_capacity > 0:
+                for i in range(delta_capacity):
+                    self.slots.append(0)
+            else:
+                self.slots = self.slots[:self.capacity]
+
+
     BUILDING_SJ_CHOICES = {
         "K": "K",
         "A": "A",
@@ -53,11 +77,11 @@ class BicycleHolder(models.Model):
         "C": "C",
         "E": "E"
     }
-    
+    slots = []
     capacity = models.PositiveSmallIntegerField("Capacity", default=1, null=False)
     location = models.CharField("Location", max_length=30)
     nearest_building = models.CharField("Nearest building", max_length=1, choices=BUILDING_SJ_CHOICES)
-    nearest_guard = models.ForeignKey("Guard", on_delete=models.CASCADE)
+    nearest_guard = models.ForeignKey("Guard", on_delete=models.CASCADE, null=True, default=None)
 
 class KeyChain(models.Model):
     uuid = models.PositiveBigIntegerField("UUID", default=None, null=True)
