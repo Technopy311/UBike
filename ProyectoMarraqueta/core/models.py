@@ -1,34 +1,66 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
+from .managers import CustomUserManager
 
-#class BicyUser(AbstractUser):#userbastrac
-    #inherits Django User
-    #pass
 
-class BicyUser(models.Model):
-    #dummy Model
-    pass
+class BicyUser(AbstractUser):
+
+    USER_TYPE_CHOICES = {
+        "STU": "Student",
+        "PRO": "Professor",
+        "ACA": "Academic",
+        "EXT": "External",
+        "STA": "Staff",
+    }
+
+    name = models.CharField(verbose_name="Nombre", max_length=25, null=None)
+    last_name = models.CharField(verbose_name="Apellido", max_length=25, null=None)
+    usm_email = models.EmailField(
+        verbose_name="Email USM", 
+        max_length=25, 
+        null=None, 
+        unique=True,
+        error_messages={
+            'unique': "Ese correo ya se encuentra registrado."
+        })
+    run = models.PositiveBigIntegerField(
+        verbose_name="RUN", 
+        null=None, 
+        unique=True, 
+        error_messages={
+            'unique': "Ese RUN ya se encuentra registrado."
+        })
+    usm_role = models.PositiveBigIntegerField(
+        verbose_name="ROL USM", 
+        null=True, 
+        default=None,
+        error_messages={
+            'unique': "Ese ROL ya se encuentra regisrado."
+        })
+    user_type = models.CharField(choices=USER_TYPE_CHOICES, default="STU", max_length=3)
+
+    def is_student(self):
+        return self.user_type == "STU"
+    def is_professor(self):
+        return self.user_type == "PRO"
+    def is_academic(self):
+        return self.user_type == "ACA"
+    def is_external(self):
+        return self.user_type == "EXT"
+    def is_staff(self):
+        return self.user_type == "STA"
 
 
 class Bicycle(models.Model):
-    ROADBIKE = "RB"
-    CYCLOCROSS = "CCB"
-    GRAVEL = "GB"
-    TIMETRIAL = "TTB"
-    TOURING = "TB"
-    FOLDING = "FB"
-    BMX = "BMX"
-    EBIKE = "EB"
-    
     BIKES_CHOICES = {
-        ROADBIKE: "Road Bike",
-        CYCLOCROSS: "Cyclo-cross Bike",
-        GRAVEL: "Grave Bike",
-        TIMETRIAL: "Time Trial Bike",
-        TOURING: "Touring Bike",
-        FOLDING: "Folding Bike",
-        BMX: "BMX",
-        EBIKE: "Electric Bike"
+        "RB": "Road Bike",
+        "CCB": "Cyclo-cross Bike",
+        "GB": "Grave Bike",
+        "TTB": "Time Trial Bike",
+        "TB": "Touring Bike",
+        "FB": "Folding Bike",
+        "BMX": "BMX",
+        "EB": "Electric Bike"
     }
 
     
@@ -37,10 +69,11 @@ class Bicycle(models.Model):
     bike_type = models.CharField(
         max_length=3,
         choices=BIKES_CHOICES,
-        default=ROADBIKE,
+        default="RB",
         null=False
     )
     bicy_user = models.ForeignKey("BicyUser", on_delete=models.CASCADE)
+
 
 
 class Guard(models.Model):
@@ -48,6 +81,7 @@ class Guard(models.Model):
     name = models.CharField("Name", max_length=20, null=False),
     last_name = models.CharField("Lastname", max_length=30, null=False),
     run = models.PositiveIntegerField("RUN", null=False)
+
 
 
 class BicycleHolder(models.Model):
@@ -69,7 +103,6 @@ class BicycleHolder(models.Model):
             else:
                 self.slots = self.slots[:self.capacity]
 
-
     @classmethod
     def add_bicycle(cls, Bicycle):
         """Add a bicycle instance's PK to the slots arr
@@ -78,15 +111,48 @@ class BicycleHolder(models.Model):
             Bicycle (_core.Bicycle_): instance of core.Bicycle model
 
         Returns:
-            Bool: 0 if succes; 1 if Bicycle is not instance of core.Bicycle
+            Int: 0 if success
+            Int: 1 if Bicycle is not instance of core.Bicycle
+            Int: 2 if no available space
+            
         """
 
         if Bicycle.isinstance(Bicycle):
-            empty_place = cls.slots.index(0)
+            try:
+                empty_place = cls.slots.index(0)
+            except ValueError:
+                return 2
+            
             cls.slots[empty_place] = Bicycle.pk
-            return False
+            return 0
         else:
-            return True
+            return 1
+
+    @classmethod
+    def del_bicycle(cls, bicycle_pk):
+        """Deletes a bicycle from the BicycleHolder
+
+        Args:
+            bicycle_pk (Int): The primary key of a core.Bicycle model
+
+        Returns:
+            Int: 0 if bicycle deleted succesfully
+            Int: 1 if bicycle_pk is not Int
+            Int: 2 if bicycle_pk is not in slots
+        """
+
+        if type(bicycle_pk) == type(0):  # Check if the type of bicycle_pk is int
+            try:
+                bicycle_index = cls.slots.index(bicycle_pk)
+            except ValueError:
+                return 2
+            
+            cls.slots[bicycle_index] = 0
+            return 0
+        else:
+            return 1
+        
+        
 
 
     BUILDING_SJ_CHOICES = {
@@ -101,6 +167,7 @@ class BicycleHolder(models.Model):
     location = models.CharField("Location", max_length=30)
     nearest_building = models.CharField("Nearest building", max_length=1, choices=BUILDING_SJ_CHOICES)
     nearest_guard = models.ForeignKey("Guard", on_delete=models.CASCADE, null=True, default=None)
+
 
 
 class KeyChain(models.Model):
