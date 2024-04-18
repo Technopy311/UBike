@@ -1,6 +1,5 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from .managers import CustomUserManager
 
 
 class BicyUser(AbstractUser):
@@ -103,17 +102,35 @@ class BicycleHolder(models.Model):
             else:
                 self.slots = self.slots[:self.capacity]
 
+
     @classmethod
-    def add_bicycle(cls, Bicycle):
-        """Add a bicycle instance's PK to the slots arr
+    def check_bicycle(cls, Bicycle):
+        """Check if the given Bicycle is in the slots arr
 
         Args:
-            Bicycle (_core.Bicycle_): instance of core.Bicycle model
+            Bicycle (core.models.Bicycle): _description_
 
         Returns:
-            Int: 0 if success
-            Int: 1 if Bicycle is not instance of core.Bicycle
-            Int: 2 if no available space
+            Int: 0 if exists. 1 if not exists. -1 if Bicycle.pk not integer.
+        """
+        try:
+            if Bicycle.pk in cls.slots():
+                return 0
+            else:
+                return 1
+        except ValueError:
+            return -1
+        
+
+    @classmethod
+    def add_bicycle(cls, Bicycle):
+        """Add a bicycle instance's PK to the slots arr.
+
+        Args:
+            Bicycle (core.models.Bicycle): instance of core.Bicycle model.
+
+        Returns:
+            Int: 0 if success. 1 if Bicycle not instance of core.Bicycle. 2 if no space.
             
         """
 
