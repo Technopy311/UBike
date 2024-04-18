@@ -1,0 +1,21 @@
+1.- El módulo picow POST a api, con la UUID del llavero.
+2.- La api recibe UUID.
+3.- La api obtiene la instancia del Bicycleholder 
+    correspondiente al módulo que envió la petición POST (1).
+4.- La api obtiene las bicicletas del usuario.
+5.- La api revisa que alguna de las bicicletas mediante el 
+    método check_bicycle se encuentre en el bicicletero 
+    correspondiente.
+
+6.- Si se encontró alguna bicicleta en el bicicletero, 
+    
+    6.1: Se ejecuta el método del_bicycle del bicicletero.
+
+    6.2: HTTP Response, con la posición de la bicicleta.
+
+7.- Si no se encontró bicicleta en el bicicletero,
+
+    7.1: Se ejecuta el método add_bicycle del bicicletero.
+
+    7.2: HTTP Response, con la posición del slot disponible.
+
