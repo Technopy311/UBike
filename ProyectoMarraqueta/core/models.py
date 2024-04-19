@@ -1,19 +1,35 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+class User(AbstractUser):
+    class Role(models.TextChoices):
+        ADMIN = "ADM", 'Admin'
+        STUDENT = "STU", 'Student'
+        PROFESSOR = "PRO", 'Professor'
+        ACADEMIC = "ACA", 'Academic'
+        EXTERNAL = "EXT", 'External'
+        STAFF = "STA", 'Staff'
+        GUARD = "GUA", 'Guard'
 
-class BicyUser(AbstractUser):
-
-    USER_TYPE_CHOICES = {
-        "STU": "Student",
-        "PRO": "Professor",
-        "ACA": "Academic",
-        "EXT": "External",
-        "STA": "Staff",
-    }
+    base_role = Role.ADMIN
 
     name = models.CharField(verbose_name="Nombre", max_length=25, null=None)
+    user_type = models.CharField(choices=Role.choices, default="STU", max_length=3)
     last_name = models.CharField(verbose_name="Apellido", max_length=25, null=None)
+    run = models.PositiveBigIntegerField(
+        verbose_name="RUN", 
+        null=None, 
+        unique=True, 
+        error_messages={
+            'unique': "Ese RUN ya se encuentra registrado."
+        })
+    
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            self.role = self.base_role
+            return super().save(*args, **kwargs)
+
+class UsmUser(User):
     usm_email = models.EmailField(
         verbose_name="Email USM", 
         max_length=25, 
@@ -22,13 +38,6 @@ class BicyUser(AbstractUser):
         error_messages={
             'unique': "Ese correo ya se encuentra registrado."
         })
-    run = models.PositiveBigIntegerField(
-        verbose_name="RUN", 
-        null=None, 
-        unique=True, 
-        error_messages={
-            'unique': "Ese RUN ya se encuentra registrado."
-        })
     usm_role = models.PositiveBigIntegerField(
         verbose_name="ROL USM", 
         null=True, 
@@ -36,19 +45,40 @@ class BicyUser(AbstractUser):
         error_messages={
             'unique': "Ese ROL ya se encuentra regisrado."
         })
-    user_type = models.CharField(choices=USER_TYPE_CHOICES, default="STU", max_length=3)
 
-    def is_student(self):
-        return self.user_type == "STU"
-    def is_professor(self):
-        return self.user_type == "PRO"
-    def is_academic(self):
-        return self.user_type == "ACA"
-    def is_external(self):
-        return self.user_type == "EXT"
-    def is_staff(self):
-        return self.user_type == "STA"
+class OtherUser(User):
+    email = models.EmailField(
+        verbose_name="Email", 
+        max_length=25, 
+        null=None, 
+        unique=True,
+        error_messages={
+            'unique': "Ese correo ya se encuentra registrado."
+        })
 
+
+
+class Student(UsmUser):
+    base_role = UsmUser.User.Role.STUDENT
+
+class Professor(UsmUser):
+    base_role = UsmUser.User.Role.PROFESSOR
+
+class Academic(UsmUser):
+    base_role = UsmUser.User.Role.ACADEMIC
+
+class External(OtherUser):
+    base_role = OtherUser.User.Role.EXTERNAL
+
+class Staff(OtherUser):
+    base_role = OtherUser.User.Role.STAFF
+
+class Guard(OtherUser):
+    base_role = OtherUser.User.Role.GUARD
+
+
+
+""" Non Human Models """
 
 class Bicycle(models.Model):
     BIKES_CHOICES = {
@@ -71,21 +101,11 @@ class Bicycle(models.Model):
         default="RB",
         null=False
     )
-    bicy_user = models.ForeignKey("BicyUser", on_delete=models.CASCADE)
-
-
-class Guard(models.Model):
-    #Inherits Django user
-    name = models.CharField("Name", max_length=20, null=False),
-    last_name = models.CharField("Lastname", max_length=30, null=False),
-    run = models.PositiveIntegerField("RUN", null=False)
-
+    bicy_user = models.ForeignKey("Student", on_delete=models.CASCADE)
 
 class KeyChain(models.Model):
     uuid = models.PositiveBigIntegerField("UUID", default=None, null=True)
-    user = models.ForeignKey("BicyUser", on_delete=models.CASCADE)
-
-
+    user = models.ForeignKey("Student", on_delete=models.CASCADE)
 
 class BicycleHolder(models.Model):
     
