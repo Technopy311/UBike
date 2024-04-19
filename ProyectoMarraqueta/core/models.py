@@ -74,12 +74,16 @@ class Bicycle(models.Model):
     bicy_user = models.ForeignKey("BicyUser", on_delete=models.CASCADE)
 
 
-
 class Guard(models.Model):
     #Inherits Django user
     name = models.CharField("Name", max_length=20, null=False),
     last_name = models.CharField("Lastname", max_length=30, null=False),
     run = models.PositiveIntegerField("RUN", null=False)
+
+
+class KeyChain(models.Model):
+    uuid = models.PositiveBigIntegerField("UUID", default=None, null=True)
+    user = models.ForeignKey("BicyUser", on_delete=models.CASCADE)
 
 
 
@@ -145,6 +149,7 @@ class BicycleHolder(models.Model):
         else:
             return 1
 
+
     @classmethod
     def del_bicycle(cls, bicycle_pk):
         """Deletes a bicycle from the BicycleHolder
@@ -185,9 +190,4 @@ class BicycleHolder(models.Model):
     nearest_building = models.CharField("Nearest building", max_length=1, choices=BUILDING_SJ_CHOICES)
     nearest_guard = models.ForeignKey("Guard", on_delete=models.CASCADE, null=True, default=None)
 
-
-
-class KeyChain(models.Model):
-    uuid = models.PositiveBigIntegerField("UUID", default=None, null=True)
-    user = models.ForeignKey("BicyUser", on_delete=models.CASCADE)
 
