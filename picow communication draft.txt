@@ -1,3 +1,5 @@
+Protocolo que se utiliza para la comunicación: HTTP
+
 1.- El módulo picow POST a api, con la UUID del llavero.
 2.- La api recibe UUID.
 3.- La api obtiene la instancia del Bicycleholder 
