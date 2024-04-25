@@ -15,7 +15,7 @@ class User(AbstractUser):
 
     is_guard = False
     base_role = Role.ADMIN
-    name = models.CharField(verbose_name="Nombre", max_length=25, null=None)
+    AbstractUser.username = models.CharField(verbose_name="Nombre", max_length=25, null=None)
     user_type = models.CharField(choices=Role.choices, default="STU", max_length=3)
     last_name = models.CharField(verbose_name="Apellido", max_length=25, null=None)
     run = models.PositiveBigIntegerField(
@@ -32,7 +32,7 @@ class User(AbstractUser):
             return super().save(*args, **kwargs)
 
 class UsmUser(User):
-    usm_email = models.EmailField(
+    AbstractUser.email = models.EmailField(
         verbose_name="Email USM", 
         max_length=25, 
         null=None, 
@@ -49,15 +49,14 @@ class UsmUser(User):
         })
 
 class OtherUser(User):
-    pass
-    """email = models.EmailField(
+    AbstractUser.email = models.EmailField(
         verbose_name="Email", 
         max_length=25, 
         null=None, 
         unique=True,
         error_messages={
             'unique': "Ese correo ya se encuentra registrado."
-        })"""
+        })
 
 
 """ Derivative user models """
@@ -218,6 +217,6 @@ class BicycleHolder(models.Model):
     capacity = models.PositiveSmallIntegerField("Capacity", default=1, null=False)
     location = models.CharField("Location", max_length=30)
     nearest_building = models.CharField("Nearest building", max_length=1, choices=BUILDING_SJ_CHOICES)
-    nearest_guard = models.ForeignKey("Guard", on_delete=models.CASCADE, null=True, default=None)
+    nearest_guard = models.ForeignKey("Guard", on_delete=models.CASCADE, default=None)
 
 
