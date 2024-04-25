@@ -13,14 +13,13 @@ class User(AbstractUser):
         STAFF = "STA", 'Staff'
         GUARD = "GUA", 'Guard'
 
-    is_guard = False
-    base_role = Role.ADMIN
+    is_guard = models.BooleanField("Es Guardia?", default=False)
     AbstractUser.username = models.CharField(verbose_name="Nombre", max_length=25, null=None)
     user_type = models.CharField(choices=Role.choices, default="STU", max_length=3)
     last_name = models.CharField(verbose_name="Apellido", max_length=25, null=None)
     run = models.PositiveBigIntegerField(
         verbose_name="RUN", 
-        null=None, 
+        null=True, 
         unique=True, 
         error_messages={
             'unique': "Ese RUN ya se encuentra registrado."
@@ -28,7 +27,7 @@ class User(AbstractUser):
     
     def save(self, *args, **kwargs):
         if not self.pk:
-            self.role = self.base_role
+            self.role = self.user_type
             return super().save(*args, **kwargs)
 
 class UsmUser(User):
@@ -62,27 +61,67 @@ class OtherUser(User):
 """ Derivative user models """
 
 class Student(UsmUser):
-    base_role = User.Role.STUDENT
-    career = models.CharField("Carrera", max_length=20, default=None)
+    User.user_type = User.Role.STUDENT
+    career = models.CharField("Carrera", max_length=20, default=None, null=True)
+
+    def __str__(self):
+        return "Estudiante " + str(self.run)
+    
+    class Meta:
+        verbose_name = "Estudiante"
+        verbose_name_plural = "Estudiantes"
 
 class Professor(UsmUser):
-    base_role = User.Role.PROFESSOR
-    department = models.CharField("Departamento", max_length=20, default=None)
+    User.user_type = User.Role.PROFESSOR
+    department = models.CharField("Departamento", max_length=20, default=None, null=True)
+    
+    def __str__(self):
+        return "Profesor " + str(self.run)
+    
+    class Meta:
+        verbose_name = "Profesor"
+        verbose_name_plural = "Profesores"
 
 class Academic(OtherUser):
-    base_role = User.Role.ACADEMIC
-    connection = models.CharField("Conexión con USM", max_length=100, default=None)
+    User.user_type = User.Role.ACADEMIC
+    connection = models.CharField("Conexión con USM", max_length=100, default=None, null=True)
+
+    def __str__(self):
+        return "Academico " + str(self.run)
+    
+    class Meta:
+        verbose_name = "Academico"
+        verbose_name_plural = "Academicos"
 
 class External(OtherUser):
-    base_role = User.Role.EXTERNAL
-    connection = models.CharField("Conexión con USM", max_length=100, default=None)
+    User.user_type = User.Role.EXTERNAL
+    connection = models.CharField("Conexión con USM", max_length=100, default=None, null=True)
+
+    def __str__(self):
+        return "Externo " + str(self.run)
+    
+    class Meta:
+        verbose_name = "Externo"
+        verbose_name_plural = "Externos"
 
 class Staff(OtherUser):
-    base_role = User.Role.STAFF
-    charge = models.CharField("Cargo en USM", max_length=40, default=None)
+    User.user_type = User.Role.STAFF
+    charge = models.CharField("Cargo en USM", max_length=40, default=None, null=True)
+    def __str__(self):
+        return "Staff " + str(self.run)
+    
+    class Meta:
+        verbose_name = "Staff"
+        verbose_name_plural = "Staffs"
 
 class Guard(OtherUser):
-    base_role = User.Role.GUARD
+    User.is_guard = True
+    def __str__(self):
+        return "Guardia " + str(self.run)
+    
+    class Meta:
+        verbose_name = "Guardia"
+        verbose_name_plural = "Guardias"
     
 
 
