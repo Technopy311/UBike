@@ -8,9 +8,9 @@ ssid = 'FPWOM'
 password = 'NHl7g371#0'
 
 led = Pin(13, Pin.OUT)
-
 led.value(1)
 
+# Function to blink builtin LED
 def turn_led():
     led.value(1)
     time.sleep(0.1)
@@ -22,7 +22,7 @@ def turn_led():
     time.sleep(0.1)
     led.value(1)
     
-
+# Connect to wifi
 def connect_wifi():
     wlan = network.WLAN(network.STA_IF)
     wlan.active(True)
@@ -46,27 +46,26 @@ def connect_wifi():
 
 def send_uuid(url, uuid):
 
-    wlan = connect_wifi()
+    wlan = connect_wifi() # Try connect to wifi
 
     headers = {}
     payload = str(uuid)
-    
     retry = True
     
     while retry:        
         try:
             print("sending...")
-            response = requests.post(url, headers=headers, data=payload)
-            print("sent (" + str(response.status_code) + "), status = " + str(wlan.status()) )
-            response.close()
-            turn_led()
+            response = requests.post(url, headers=headers, data=payload)  # Send data through POST request to API endpoint
+            print("sent (" + str(response.status_code) + "), status = " + str(wlan.status()) ) # Print POST request status and Wifi connection status
+            response.close() # ALWAYS CLOSE RESPONSE! (low memory)
+            turn_led() # Blink LED
             retry = False
             time.sleep(5)
         except Exception as e:
             print(e, "\n")
-            print("could not connect (status=" + str(wlan.status()) + ")")
+            print("could not connect (status=" + str(wlan.status()) + ")") # Wifi failure message
             
-            if wlan.status() < 0 or wlan.status()>=3:
+            if wlan.status() < 0 or wlan.status()>=3: # Try to reconnect wifi
                 print("trying to reconnect...")
                 wlan.disconnect()
                 wlan.connect(ssid, password)
