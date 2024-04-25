@@ -4,8 +4,8 @@ import urequests as requests
 
 from machine import Pin
 
-ssid = 'FPWOM'
-password = 'NHl7g371#0'
+ssid = ''
+password = ''
 
 led = Pin(13, Pin.OUT)
 led.value(1)
