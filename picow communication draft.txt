@@ -1,23 +1,34 @@
-Protocolo que se utiliza para la comunicación: HTTP
+Nota: 
+El protocolo que se utiliza para la comunicación entre el módulo y el servidor central es HTTP, 
+el protocolo de red que se utiliza es WIFI.
 
-1.- El módulo picow POST a api, con la UUID del llavero.
-2.- La api recibe UUID.
-3.- La api obtiene la instancia del Bicycleholder 
-    correspondiente al módulo que envió la petición POST (1).
-4.- La api obtiene las bicicletas del usuario.
-5.- La api revisa que alguna de las bicicletas mediante el 
-    método check_bicycle se encuentre en el bicicletero 
-    correspondiente.
+
+Pasos:
+
+1.- El módulo lee los datos del llavero mediante el lector RFID.
+2.- El módulo guarda la UUID del llavero
+3.- El módulo realiza una petición tipo POST a una API del servidor central, 
+    que contiene la UUID del llavero y la dirección IP del módulo.
+
+2.- La api recibe los datos de la petición POST.
+3.- La api obtiene la instancia del modelo Bicicletero (Bicycleholder)
+    correspondiente al módulo que envió la petición POST (1), mediante su IP.
+4.- La api obtiene el usuario que tiene asociada la UUID del llavero.
+5.- La api obtiene las PrimaryKey (ID) de las bicicletas del usuario.
+5.- La api revisa que alguna de las bicicletas se encuentre en el bicicletero 
+    mediante el método check_bicycle correspondiente.
 
 6.- Si se encontró alguna bicicleta en el bicicletero, 
-    
     6.1: Se ejecuta el método del_bicycle del bicicletero.
+    6.2: Se envía una respuesta HTTP, con la respeciva posición de la bicicleta.
 
-    6.2: HTTP Response, con la posición de la bicicleta.
 
 7.- Si no se encontró bicicleta en el bicicletero,
-
     7.1: Se ejecuta el método add_bicycle del bicicletero.
+    7.2: Se envía respuesta HTTP, con la posición del slot disponible.
 
-    7.2: HTTP Response, con la posición del slot disponible.
 
+8.- El módulo recibe la respuesta HTTP de la API.
+9.- El módulo abre el slot indicado por 5 (aproximadamente) segundos.
+10.- El usuario ingresa la bicicleta y espera que se cierre la cerradura.
+11.- El servidor central muestra la ubicación de la bicicleta.
