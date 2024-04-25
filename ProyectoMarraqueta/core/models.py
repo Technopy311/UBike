@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+""" Base User Models """
+
 class User(AbstractUser):
     class Role(models.TextChoices):
         ADMIN = "ADM", 'Admin'
@@ -11,8 +13,8 @@ class User(AbstractUser):
         STAFF = "STA", 'Staff'
         GUARD = "GUA", 'Guard'
 
+    is_guard = False
     base_role = Role.ADMIN
-
     name = models.CharField(verbose_name="Nombre", max_length=25, null=None)
     user_type = models.CharField(choices=Role.choices, default="STU", max_length=3)
     last_name = models.CharField(verbose_name="Apellido", max_length=25, null=None)
@@ -47,34 +49,42 @@ class UsmUser(User):
         })
 
 class OtherUser(User):
-    email = models.EmailField(
+    pass
+    """email = models.EmailField(
         verbose_name="Email", 
         max_length=25, 
         null=None, 
         unique=True,
         error_messages={
             'unique': "Ese correo ya se encuentra registrado."
-        })
+        })"""
 
 
+""" Derivative user models """
 
 class Student(UsmUser):
-    base_role = UsmUser.User.Role.STUDENT
+    base_role = User.Role.STUDENT
+    career = models.CharField("Carrera", max_length=20, default=None)
 
 class Professor(UsmUser):
-    base_role = UsmUser.User.Role.PROFESSOR
+    base_role = User.Role.PROFESSOR
+    department = models.CharField("Departamento", max_length=20, default=None)
 
-class Academic(UsmUser):
-    base_role = UsmUser.User.Role.ACADEMIC
+class Academic(OtherUser):
+    base_role = User.Role.ACADEMIC
+    connection = models.CharField("Conexión con USM", max_length=100, default=None)
 
 class External(OtherUser):
-    base_role = OtherUser.User.Role.EXTERNAL
+    base_role = User.Role.EXTERNAL
+    connection = models.CharField("Conexión con USM", max_length=100, default=None)
 
 class Staff(OtherUser):
-    base_role = OtherUser.User.Role.STAFF
+    base_role = User.Role.STAFF
+    charge = models.CharField("Cargo en USM", max_length=40, default=None)
 
 class Guard(OtherUser):
-    base_role = OtherUser.User.Role.GUARD
+    base_role = User.Role.GUARD
+    
 
 
 
