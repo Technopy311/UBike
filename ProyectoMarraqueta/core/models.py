@@ -155,6 +155,10 @@ class KeyChain(models.Model):
     uuid = models.PositiveBigIntegerField("UUID", default=None, null=True)
     user = models.ForeignKey("Student", on_delete=models.CASCADE)
 
+class PicowModule(models.Model):
+    ip_address = models.CharField("Ip Address", max_length=15, default="")
+    latest_online = models.DateTimeField("Lastest online", null=True)
+
 class BicycleHolder(models.Model):
     
     def save(self, *args, **kwargs):
@@ -176,7 +180,7 @@ class BicycleHolder(models.Model):
 
 
     @classmethod
-    def check_bicycle(cls, Bicycle):
+    def check_bicycle(cls, bicycle_pk):
         """Check if the given Bicycle is in the slots arr
 
         Args:
@@ -186,7 +190,7 @@ class BicycleHolder(models.Model):
             Int: 0 if exists. 1 if not exists. -1 if Bicycle.pk not integer.
         """
         try:
-            if Bicycle.pk in cls.slots():
+            if bicycle_pk in cls.slots():
                 return 0
             else:
                 return 1
@@ -257,5 +261,5 @@ class BicycleHolder(models.Model):
     location = models.CharField("Location", max_length=30)
     nearest_building = models.CharField("Nearest building", max_length=1, choices=BUILDING_SJ_CHOICES)
     nearest_guard = models.ForeignKey("Guard", on_delete=models.CASCADE, default=None)
-
+    picow_module = models.OneToOneField(PicowModule, on_delete=models.CASCADE)
 
