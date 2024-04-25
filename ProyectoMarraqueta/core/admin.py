@@ -2,30 +2,120 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from . import models as core_models
 
-class CustomUserAdmin(UserAdmin):
+class CustomBaseUser(UserAdmin):
+    
     fieldsets = (
-        *UserAdmin.fieldsets,
+            *UserAdmin.fieldsets,
+            (
+                'Base Fields',
+                {
+                    'fields':(
+                        'is_guard',
+                        'user_type',
+                        'run',
+                    ),
+                }
+            )
+        )
+
+admin.site.register(core_models.User, CustomBaseUser)
+
+
+class CustomUserStudent(CustomBaseUser):
+    fieldsets = (
+        *CustomBaseUser.fieldsets,
         (
-            'New Fields',
+            'Student Fields',
             {
-                'fields': (
-                    'is_guard',
-                    'base_role',
-                    'name',
-                    'user_type',
-                    'last_name',
-                    'run',
+                'fields':(
+                    'career',
+                    'usm_role',
                 ),
-            },
-        ),
+            }
+        )
     )
 
-admin.site.register(core_models.User, CustomUserAdmin)
-admin.site.register(core_models.Student, CustomUserAdmin)
-admin.site.register(core_models.Professor, CustomUserAdmin)
-admin.site.register(core_models.Academic, CustomUserAdmin)
-admin.site.register(core_models.External, CustomUserAdmin)
-admin.site.register(core_models.Staff, CustomUserAdmin)
-admin.site.register(core_models.Guard, CustomUserAdmin)
+admin.site.register(core_models.Student, CustomUserStudent)
+
+
+class CustomuUserProfessor(CustomBaseUser):
+    fieldsets = (
+        *CustomBaseUser.fieldsets,
+        (
+            'Professor Fields',
+            {
+                'fields':(
+                    'department',
+                    'usm_role',
+                ),
+            }
+        )
+    )
+
+admin.site.register(core_models.Professor, CustomuUserProfessor)
+
+
+class CustomuUserAcademic(CustomBaseUser):
+    fieldsets = (
+        *CustomBaseUser.fieldsets,
+        (
+            'Academic Fields',
+            {
+                'fields':(
+                    'connection',
+                ),
+            }
+        )
+    )
+
+admin.site.register(core_models.Academic, CustomuUserAcademic)
+
+
+class CustomuUserExternal(CustomBaseUser):
+    fieldsets = (
+        *CustomBaseUser.fieldsets,
+        (
+            'External Fields',
+            {
+                'fields':(
+                    'connection',
+                ),
+            }
+        )
+    )
+
+admin.site.register(core_models.External, CustomuUserExternal)
+
+
+class CustomuUserStaff(CustomBaseUser):
+    fieldsets = (
+        *CustomBaseUser.fieldsets,
+        (
+            'Staff Fields',
+            {
+                'fields':(
+                    'charge',
+                ),
+            }
+        )
+    )
+
+admin.site.register(core_models.Staff, CustomuUserStaff)
+
+
+class CustomuUserGuard(CustomBaseUser):
+    fieldsets = (
+        *CustomBaseUser.fieldsets,
+        (
+            'Guard Fields',
+            {
+                'fields':(
+                    'connection',
+                ),
+            }
+        )
+    )
+
+admin.site.register(core_models.Guard, CustomuUserGuard)
 
 #admin.site.register(core_models.Guard)
