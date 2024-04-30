@@ -1,0 +1,2 @@
+Base modelo carcasa del módulo: https://www.thingiverse.com/thing:4125952
+ESP32 DevKit Case - by bkgoodman is licensed under the Creative Commons - Attribution license.
