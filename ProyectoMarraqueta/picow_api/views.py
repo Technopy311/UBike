@@ -3,6 +3,7 @@ from django.http import HttpResponse
 import json
 from core import models as core_models
 
+
 def auth_user():
     pass
 
@@ -24,18 +25,16 @@ def controller(keychain_uuid, picow_ip_addr):
     bicycles = user.bicycle_set.all()
     
     # Check which of the PKs is in the Bicycleholder
-    for bicycle in enumerate(bicycles):
+    for bicycle in bicycles:
         is_saved = bicycle_holder.check_bicycle(bicycle.pk)
 
         if is_saved == 0: # Case 1: if there is bicycle in bicycleholder.
             pass
         elif is_saved == 1: # Case 2: if there is not bicycle in bicycleholder.
-            pass
+            bicycle_holder.add_bicycle(bicycle)
         elif is_saved == -1: # Case 3: if bicycle.pk is not int.
-            pass
-
-
-
+            print("Bicycle.pk is not integer")
+    ## ONLY WORKS ASSUMING ONLY 1 BICYCLE PER PERSON
 
 def recv(request):
     if request.method == "POST":

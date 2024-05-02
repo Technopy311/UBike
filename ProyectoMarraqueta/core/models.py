@@ -206,20 +206,20 @@ class BicycleHolder(models.Model):
             Bicycle (core.models.Bicycle): instance of core.Bicycle model.
 
         Returns:
-            Int: 0 if success. 1 if Bicycle not instance of core.Bicycle. 2 if no space.
-            
+            (Int, Int/None): Status Code, Empty_Place's index.
+            Status code can be: 0(success), 1(Bicycle not instance of Bicycle), 2(No empty place)
         """
 
         if Bicycle.isinstance(Bicycle):
             try:
                 empty_place = cls.slots.index(0)
             except ValueError:
-                return 2
+                return (2, None)
             
             cls.slots[empty_place] = Bicycle.pk
-            return 0
+            return (0, empty_place)
         else:
-            return 1
+            return (1, None)
 
 
     @classmethod
