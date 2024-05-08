@@ -1,31 +1,43 @@
-# Protocolo funcionamiento Módulo de estacionamiento de bicicletas (Trabajo en proceso)
+# UBike IWG101 Project
 
-## Componentes
+## Brief description
 
-El módulo consistira de los siguentes componentes: 
-- Microcontrolador Raspberry Pi Pico W
-- Lector RFID compatible con microcontroladores
-- Buzzer activo
-- Led RGB
-- Sistema de seguridad primaria
-- Relé
-- Pestillo solenoide
+This project created for Introduction to Engineering (IWG101), consists in the research and consequently development 
+of an automated bicycle holder, this with the purpose of optimizing the saving process of a bicycle in the university.
+
+## Technologies involved
+
+### Software
+
+Web:
+- Django Framework (Backend)
+- Bootstrap Library (Frontend)
+
+Hardware:
+- ESP32 C++/Arduino custom code.
+
+### Hardware
+
+- ESP32 Dev Kit 1, as microcontroller.
+- RFID reader module (RC522).
+- Red LED.
+- Custom primary security system.
+- Relay.
+- Solenoid.
+
+### Primary security system
+Each module will have a security system, wich will activate in cases such:
+- Improper module handling.
+- Energy outage.
+- Robbery attempt.
+
+Under this events, this system will become active, this prevents the unlocking of the solenoide, unless a designated manager solves the conflict or issue
 
 
-Nota: por el momento, todo el software del proyecto será desarrollado en Python, usando librerias externas como Django
-
-### Metodo de funcionamiento:
-- Se dispondrá de una serie de modulos, cada uno propio de un estacionamiento
-- Todos los modulos se contectarán a un servidor local en común, el cual será el encargado de gestionar la autenticación, otorgar permisos, registrar, entre otros
-- La autenticación será realizada por medio del UID de cada tarjeta/llavero, se considera el uso de una clave de autenticación o cifrado de la misma por motivos de seguridad
-- Una vez realizada la autenticación, y la confirmación por parte de el servidor, el solenoide se contrae durante un periodo de tiempo, permitiendo así tener acceso al estacionamiento o bicicleta
-- Es necesario realizar autenticación al llegar y al irse con la bicicleta, por motivos de registro, seguridad y posible catastro
-- El LED indicará por medio de 6 colores el estado del estacionamiento o dispositivo en caso de algun inconveniente, por medio de un codigo de color
-
-### Sistema de seguridad primaria
-Cada modulo vendra equipado con un sistema de seguridad, que se activará en posibles casos como por ejemplo:
-- Manipulación indebida del módulo
-- Corte de energia
-- Intento de robo
-
-Bajo estos eventos, se activará el modo de seguridad, que impide el desbloqueo de la cerradura solenoide a toda costa, a menos que un encargado designado solucione el conflicto
+## Working process:
+- A series of modules will be available, each one in a parking site.
+- All the modules will connect through WiFi, to a centralized server, which will be in charge of managing the authentication, permissions, registering, among others.
+- The authentication will be made through the Unique ID of each keychain (provided to each user, per bicycle).
+- Once authenticated (and server-side confirmed), the solenoid will contract for a few seconds, allowing the user to save the bicycle.
+- It is necessary perform the authentication to either save or take out the bicycle, this with the objective to improve security and backup records.
+- The LED will indicate through blinking, the status of the solenoid.
