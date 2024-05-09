@@ -62,7 +62,7 @@ class OtherUser(User):
 
 class Student(UsmUser):
     User.user_type = User.Role.STUDENT
-    career = models.CharField("Carrera", max_length=20, default=None, null=True)
+    career = models.CharField("Carrera", max_length=20, default=None, null=True) #TODO CHANGE CAREER TO CHOICES FIELD
 
     def __str__(self):
         return "Estudiante " + str(self.run)
@@ -140,7 +140,6 @@ class Bicycle(models.Model):
         "EB": "Electric Bike"
     }
 
-    
     model = models.CharField("Bicycle model", max_length=100, null=False)
     colour = models.CharField("Bicycle color", max_length=100, null=False)
     bike_type = models.CharField(
@@ -155,15 +154,10 @@ class KeyChain(models.Model):
     uuid = models.PositiveBigIntegerField("UUID", default=None, null=True)
     user = models.ForeignKey("Student", on_delete=models.CASCADE)
 
-class PicowModule(models.Model):
-    ip_address = models.CharField("Ip Address", max_length=15, default="")
-    latest_online = models.DateTimeField("Lastest online", null=True)
-
 class BicycleHolder(models.Model):
     
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)
-        
+        super().save(*args, **kwargs)        
         """
             This code below, adds or deletes BicycleHolder slots when saving the instance.
         """
@@ -177,10 +171,12 @@ class BicycleHolder(models.Model):
                     self.slots.append(0)
             else:
                 self.slots = self.slots[:self.capacity]
+        
+        print(f"{self.__str__} modified, slots: {self.slots}")
 
 
     @classmethod
-    def check_bicycle(cls, bicycle_pk):
+    def check_bicycle(cls, bicycle):
         """Check if the given Bicycle is in the slots arr
 
         Args:
@@ -189,8 +185,10 @@ class BicycleHolder(models.Model):
         Returns:
             Int: 0 if exists. 1 if not exists. -1 if Bicycle.pk not integer.
         """
+        bicycle_pk = bicycle.pk
+
         try:
-            if bicycle_pk in cls.slots():
+            if bicycle_pk in cls.slots:
                 return 0
             else:
                 return 1
@@ -199,7 +197,7 @@ class BicycleHolder(models.Model):
         
 
     @classmethod
-    def add_bicycle(cls, Bicycle):
+    def add_bicycle(cls, bicycle):
         """Add a bicycle instance's PK to the slots arr.
 
         Args:
@@ -210,20 +208,20 @@ class BicycleHolder(models.Model):
             Status code can be: 0(success), 1(Bicycle not instance of Bicycle), 2(No empty place)
         """
 
-        if Bicycle.isinstance(Bicycle):
+        if isinstance(bicycle, Bicycle): # check if bicycle belongs to Bicycleclass
             try:
                 empty_place = cls.slots.index(0)
+                #cls.slots.insert(empty_place, bicycle.pk)
+                cls.slots[empty_place] = bicycle.pk
+                return (0, empty_place)
             except ValueError:
                 return (2, None)
-            
-            cls.slots[empty_place] = Bicycle.pk
-            return (0, empty_place)
         else:
             return (1, None)
 
 
     @classmethod
-    def del_bicycle(cls, bicycle_pk):
+    def del_bicycle(cls, bicycle):
         """Deletes a bicycle from the BicycleHolder
 
         Args:
@@ -234,15 +232,14 @@ class BicycleHolder(models.Model):
             Int: 1 if bicycle_pk is not Int
             Int: 2 if bicycle_pk is not in slots
         """
-
+        bicycle_pk = bicycle.pk
         if type(bicycle_pk) == type(0):  # Check if the type of bicycle_pk is int
             try:
                 bicycle_index = cls.slots.index(bicycle_pk)
+                cls.slots[bicycle_index] = 0
+                return 0
             except ValueError:
                 return 2
-            
-            cls.slots[bicycle_index] = 0
-            return 0
         else:
             return 1
         
@@ -260,6 +257,10 @@ class BicycleHolder(models.Model):
     capacity = models.PositiveSmallIntegerField("Capacity", default=1, null=False)
     location = models.CharField("Location", max_length=30)
     nearest_building = models.CharField("Nearest building", max_length=1, choices=BUILDING_SJ_CHOICES)
-    nearest_guard = models.ForeignKey("Guard", on_delete=models.CASCADE, default=None)
-    picow_module = models.OneToOneField(PicowModule, on_delete=models.CASCADE)
+    nearest_guard = models.ForeignKey("Guard", on_delete=models.CASCADE, default=None, null=True)
 
+class PicowModule(models.Model):
+    ip_address = models.CharField("Ip Address", max_length=15, default="")
+    latest_online = models.DateTimeField("Lastest online", null=True)
+    bicycleholder = models.OneToOneField(BicycleHolder, on_delete=models.CASCADE, default=None)
+    #picow_module = models.OneToOneField(PicowModule, on_delete=models.CASCADE, default=None)
