@@ -118,4 +118,9 @@ class CustomuUserGuard(CustomBaseUser):
 
 admin.site.register(core_models.Guard, CustomuUserGuard)
 
-#admin.site.register(core_models.Guard)
+
+
+admin.site.register(core_models.BicycleHolder)
+admin.site.register(core_models.KeyChain)
+admin.site.register(core_models.PicowModule)
+admin.site.register(core_models.Bicycle)
