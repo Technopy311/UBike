@@ -149,6 +149,7 @@ class Bicycle(models.Model):
         null=False
     )
     bicy_user = models.ForeignKey("Student", on_delete=models.CASCADE)
+    is_saved = models.BooleanField("Am I saved?", default=False)
 
 class KeyChain(models.Model):
     uuid = models.PositiveBigIntegerField("UUID", default=None, null=True)
@@ -161,90 +162,75 @@ class BicycleHolder(models.Model):
         """
             This code below, adds or deletes BicycleHolder slots when saving the instance.
         """
-        if len(self.slots) == 0:
+        self_slots = self.tracker["slots"]
+        if len(self_slots) == 0:
             for i in range(self.capacity):
-                self.slots.append(0)
+                self_slots.append(0)
         else:
-            delta_capacity = self.capacity - len(self.slots)
+            delta_capacity = self.capacity - len(self_slots)
             if delta_capacity > 0:
                 for i in range(delta_capacity):
-                    self.slots.append(0)
+                    self_slots.append(0)
             else:
-                self.slots = self.slots[:self.capacity]
+                self_slots = self_slots[:self.capacity]
         
-        print(f"{self.__str__} modified, slots: {self.slots}")
+        print(f"{self.__str__} modified, slots: {self_slots}")
 
-
-    @classmethod
-    def check_bicycle(cls, bicycle):
+    def check_bicycle(self, bicycle):
         """Check if the given Bicycle is in the slots arr
 
         Args:
             Bicycle (core.models.Bicycle): _description_
 
         Returns:
-            Int: 0 if exists. 1 if not exists. -1 if Bicycle.pk not integer.
+            Int: not -1 if exists. -1 if not exists.
         """
         bicycle_pk = bicycle.pk
+        self_slots = self.tracker['slots']
 
         try:
-            if bicycle_pk in cls.slots:
-                return 0
-            else:
-                return 1
+            return self_slots.index(bicycle_pk)
         except ValueError:
             return -1
-        
 
-    @classmethod
-    def add_bicycle(cls, bicycle):
+    def add_bicycle(self, bicycle):
         """Add a bicycle instance's PK to the slots arr.
 
         Args:
             Bicycle (core.models.Bicycle): instance of core.Bicycle model.
 
         Returns:
-            (Int, Int/None): Status Code, Empty_Place's index.
-            Status code can be: 0(success), 1(Bicycle not instance of Bicycle), 2(No empty place)
+            (Int, Int/None): Tuple(Status Code, Empty_Place's index). Status code: 0(success), 1(Bicycle not instance of Bicycle), 2(No empty place)
         """
-
+        self_slots = self.tracker["slots"]
         if isinstance(bicycle, Bicycle): # check if bicycle belongs to Bicycleclass
             try:
-                empty_place = cls.slots.index(0)
-                #cls.slots.insert(empty_place, bicycle.pk)
-                cls.slots[empty_place] = bicycle.pk
+                empty_place = self_slots.index(0)
+                self_slots[empty_place] = bicycle.pk
                 return (0, empty_place)
             except ValueError:
                 return (2, None)
         else:
             return (1, None)
 
-
-    @classmethod
-    def del_bicycle(cls, bicycle):
+    def del_bicycle(self, bicycle):
         """Deletes a bicycle from the BicycleHolder
 
         Args:
             bicycle_pk (Int): The primary key of a core.Bicycle model
 
         Returns:
-            Int: 0 if bicycle deleted succesfully
-            Int: 1 if bicycle_pk is not Int
-            Int: 2 if bicycle_pk is not in slots
+            Int: 0 deletion successful; 1 bicycle_pk not in slots
         """
+        self_slots = self.tracker["slots"]
         bicycle_pk = bicycle.pk
         if type(bicycle_pk) == type(0):  # Check if the type of bicycle_pk is int
             try:
-                bicycle_index = cls.slots.index(bicycle_pk)
-                cls.slots[bicycle_index] = 0
+                bicycle_index = self_slots.index(bicycle_pk)
+                self_slots[bicycle_index] = 0
                 return 0
             except ValueError:
-                return 2
-        else:
-            return 1
-        
-        
-
+                return 1
 
     BUILDING_SJ_CHOICES = {
         "K": "K",
@@ -253,7 +239,12 @@ class BicycleHolder(models.Model):
         "C": "C",
         "E": "E"
     }
-    slots = []
+
+    def get_default_json():
+        print(type({"slots": []}))
+        return {"slots": []}
+
+    tracker = models.JSONField(default=get_default_json)
     capacity = models.PositiveSmallIntegerField("Capacity", default=1, null=False)
     location = models.CharField("Location", max_length=30)
     nearest_building = models.CharField("Nearest building", max_length=1, choices=BUILDING_SJ_CHOICES)
