@@ -1,0 +1,26 @@
+
+Opciones:
+    - No hay bicicleta
+    - Hay bicicleta
+    - Bicicleta en otro lugar
+
+Formato de respuesta:
+
+errores principales
+
+No hay bicicleta: estado="0" 
+Hay Bicicleta: estado="1"
+Bicicleta en otro lugar="-1"
+
+Sub errores (los valores que importan)
+    Bicicleta añadida: estado="0.1"
+    Error interno bicicleta: estado="0.2"
+    No hay espacio: estado="0.3"
+
+    Bicicleta eliminada: estado="1.1"
+    Bicicleta no existe: estado="1.2"
+
+Si estado es "0.1" o "1.1", index_abrir no es None, 
+sino, index_abrir es None
+
+(estado, index_abrir)

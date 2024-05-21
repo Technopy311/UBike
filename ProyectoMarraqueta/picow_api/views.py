@@ -11,12 +11,10 @@ def auth_user():
 def controller(keychain_uuid, esp_ip_addr):
     # Get the esp instance with that ip_addr
     esp_module = core_models.EspModule.objects.get(ip_address=esp_ip_addr)
-
     print(f"#######: {esp_module}")
     
     # Find the Bicycleholder instance corresponding to esp_module's instance
     bicycle_holder = esp_module.bicycleholder
-
     print(f"#######: {bicycle_holder}")
     
     # Get the KeyChain object related to keychain_uuid
@@ -28,30 +26,35 @@ def controller(keychain_uuid, esp_ip_addr):
     
     # Get a list which contains the user's bicycle's PKs
     bicycle = user.bicycle_set.all()[0]
-    
     in_holder = bicycle_holder.check_bicycle(bicycle)
 
     if in_holder == -1: 
         #check if bicycle is in another bicycleholder
         if bicycle.is_saved:
             print("Bicycle is in another holder")
+            return ("-1", None)
         else:
             print("Bicycle is not in any holder - adding it")
             status = bicycle_holder.add_bicycle(bicycle)
+            
             if status[0] == 0:
                 print("Bicycle added C:")
-                return status[1] #return available index
+                return ("0.1", status[1])
             elif status[0] == 1:
                 print("Bicycle is not a real bicycle!")
+                return ("0.2", None)
             elif status[0] == 2:
                 print("There is no empty place")
+                return ("0.3", None)
     else:
         print("There is bicycle C: - removing it")
         status = bicycle_holder.del_bicycle(bicycle)
-        if status==0:
+        if status is not -1:
             print("Bicycle deleted succesfully")
-        elif status==1:
+            return ("1.1", status[1])
+        else:
             print("Bicycle not in holder")
+            return ("1.2", None)
 
 
 def recv(request):
@@ -69,7 +72,7 @@ def recv(request):
         print(f"UUID: {uuid}. FROM: {ipaddr}")
 
         # Pass UUID and pico_w's ip address, to controller function.
-        auth_data = controller(uuid, ipaddr)
+        controller_data = controller(uuid, ipaddr)
 
         response = HttpResponse()
         response.status_code = 200
