@@ -1,0 +1,83 @@
+
+.cuerpo {
+background-color: rgb(38, 38, 205);
+}
+
+.titulo {
+	font-size: 60px;
+	color: rgb(38, 38, 205);
+	background-color: white;
+	font-family: "Patua One", serif;
+  font-weight: 400;
+  font-style: normal;
+	border: 10px double rgb(7, 7, 189);
+	
+	
+}
+ .textos {
+	font-family: "Rubik", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+ }
+
+.accordion {
+	
+	font-family: "Rubik", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+	
+	
+}
+
+ul {
+	color:rgb(38, 38, 205);
+}
+
+.inicio-volver {
+	
+	font-family: "Rubik", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.btn {
+	color:rgb(38, 38, 205);
+	font-family: "Rubik", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.hola {
+	font-weight: bold;
+	font-size: 20px;
+	color:rgb(38, 38, 205);
+}
+
+
+
+
+a {
+	text-decoration: none;
+}
+
+.link-inicio {
+	color: white;
+	font-family: "Rubik", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+
+
+.padre {
+	margin-top: 200px;
+	margin-bottom: 50px;
+}
+
+
