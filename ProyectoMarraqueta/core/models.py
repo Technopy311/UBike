@@ -1,21 +1,21 @@
+from typing import Any
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 """ Base User Models """
 
-class User(AbstractUser):
-    class Role(models.TextChoices):
-        ADMIN = "ADM", 'Admin'
-        STUDENT = "STU", 'Student'
-        PROFESSOR = "PRO", 'Professor'
-        ACADEMIC = "ACA", 'Academic'
-        EXTERNAL = "EXT", 'External'
-        STAFF = "STA", 'Staff'
-        GUARD = "GUA", 'Guard'
+class Role(models.TextChoices):
+    ADMIN = "ADM", 'Admin'
+    STUDENT = "STU", 'Student'
+    PROFESSOR = "PRO", 'Professor'
+    ACADEMIC = "ACA", 'Academic'
+    EXTERNAL = "EXT", 'External'
+    STAFF = "STA", 'Staff'
+    GUARD = "GUA", 'Guard'
 
-    is_guard = models.BooleanField("Es Guardia?", default=False)
+
+class User(AbstractUser):
     AbstractUser.username = models.CharField(verbose_name="Nombre", max_length=25, null=None)
-    user_type = models.CharField(choices=Role.choices, default="STU", max_length=3)
     last_name = models.CharField(verbose_name="Apellido", max_length=25, null=None)
     run = models.PositiveBigIntegerField(
         verbose_name="RUN", 
@@ -61,9 +61,9 @@ class OtherUser(User):
 """ Derivative user models """
 
 class Student(UsmUser):
-    User.user_type = User.Role.STUDENT
+    user_type = "STU"
     career = models.CharField("Carrera", max_length=20, default=None, null=True) #TODO CHANGE CAREER TO CHOICES FIELD
-
+    user_type = models.CharField(choices=Role.choices, default=Role.STUDENT, max_length=3)
     def __str__(self):
         return "Estudiante " + str(self.run)
     
@@ -72,7 +72,7 @@ class Student(UsmUser):
         verbose_name_plural = "Estudiantes"
 
 class Professor(UsmUser):
-    User.user_type = User.Role.PROFESSOR
+    user_type = models.CharField(choices=Role.choices, default=Role.PROFESSOR, max_length=3)
     department = models.CharField("Departamento", max_length=20, default=None, null=True)
     
     def __str__(self):
@@ -83,7 +83,7 @@ class Professor(UsmUser):
         verbose_name_plural = "Profesores"
 
 class Academic(OtherUser):
-    User.user_type = User.Role.ACADEMIC
+    user_type = models.CharField(choices=Role.choices, default=Role.ACADEMIC, max_length=3)
     connection = models.CharField("Conexión con USM", max_length=100, default=None, null=True)
 
     def __str__(self):
@@ -94,7 +94,7 @@ class Academic(OtherUser):
         verbose_name_plural = "Academicos"
 
 class External(OtherUser):
-    User.user_type = User.Role.EXTERNAL
+    user_type = models.CharField(choices=Role.choices, default=Role.EXTERNAL, max_length=3)
     connection = models.CharField("Conexión con USM", max_length=100, default=None, null=True)
 
     def __str__(self):
@@ -105,7 +105,7 @@ class External(OtherUser):
         verbose_name_plural = "Externos"
 
 class Staff(OtherUser):
-    User.user_type = User.Role.STAFF
+    user_type = models.CharField(choices=Role.choices, default=Role.STAFF, max_length=3)
     charge = models.CharField("Cargo en USM", max_length=40, default=None, null=True)
     def __str__(self):
         return "Staff " + str(self.run)
@@ -115,7 +115,7 @@ class Staff(OtherUser):
         verbose_name_plural = "Staffs"
 
 class Guard(OtherUser):
-    User.is_guard = True
+    user_type = models.CharField(choices=Role.choices, default=Role.GUARD, max_length=3)
     def __str__(self):
         return "Guardia " + str(self.run)
     
@@ -148,14 +148,14 @@ class Bicycle(models.Model):
         default="RB",
         null=False
     )
-    bicy_user = models.ForeignKey("Student", on_delete=models.CASCADE)
+    bicy_user = models.ForeignKey("User", on_delete=models.CASCADE)
     is_saved = models.BooleanField("Am I saved?", default=False)
 
     image = models.ImageField(upload_to="uploads/", default=None, null=True)
 
 class KeyChain(models.Model):
     uuid = models.UUIDField(default=None, editable=True)
-    user = models.ForeignKey("Student", on_delete=models.CASCADE)
+    user = models.ForeignKey("User", on_delete=models.CASCADE)
 
 class BicycleHolder(models.Model):
     
@@ -243,7 +243,6 @@ class BicycleHolder(models.Model):
     }
 
     def get_default_json():
-        print(type({"slots": []}))
         return {"slots": []}
 
     tracker = models.JSONField(default=get_default_json)
