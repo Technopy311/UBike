@@ -151,8 +151,10 @@ class Bicycle(models.Model):
     bicy_user = models.ForeignKey("Student", on_delete=models.CASCADE)
     is_saved = models.BooleanField("Am I saved?", default=False)
 
+    image = models.ImageField(upload_to="uploads/", default=None, null=True)
+
 class KeyChain(models.Model):
-    uuid = models.PositiveBigIntegerField("UUID", default=None, null=True)
+    uuid = models.UUIDField(default=None, editable=True)
     user = models.ForeignKey("Student", on_delete=models.CASCADE)
 
 class BicycleHolder(models.Model):
@@ -250,8 +252,7 @@ class BicycleHolder(models.Model):
     nearest_building = models.CharField("Nearest building", max_length=1, choices=BUILDING_SJ_CHOICES)
     nearest_guard = models.ForeignKey("Guard", on_delete=models.CASCADE, default=None, null=True)
 
-class PicowModule(models.Model):
-    ip_address = models.CharField("Ip Address", max_length=15, default="")
+class EspModule(models.Model):
+    ip_address = models.GenericIPAddressField(protocol='IPv4', default=None, null=True)
     latest_online = models.DateTimeField("Lastest online", null=True)
     bicycleholder = models.OneToOneField(BicycleHolder, on_delete=models.CASCADE, default=None)
-    #picow_module = models.OneToOneField(PicowModule, on_delete=models.CASCADE, default=None)
