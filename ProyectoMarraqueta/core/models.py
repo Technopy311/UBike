@@ -222,7 +222,7 @@ class BicycleHolder(models.Model):
             bicycle_pk (Int): The primary key of a core.Bicycle model
 
         Returns:
-            Int: 0 deletion successful; 1 bicycle_pk not in slots
+            Int: Available index OR -1 if bicycle not in slots
         """
         self_slots = self.tracker["slots"]
         bicycle_pk = bicycle.pk
@@ -230,9 +230,9 @@ class BicycleHolder(models.Model):
             try:
                 bicycle_index = self_slots.index(bicycle_pk)
                 self_slots[bicycle_index] = 0
-                return 0
+                return bicycle_index
             except ValueError:
-                return 1
+                return -1
 
     BUILDING_SJ_CHOICES = {
         "K": "K",
