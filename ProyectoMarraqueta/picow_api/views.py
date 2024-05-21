@@ -8,14 +8,14 @@ def auth_user():
     pass
 
 
-def controller(keychain_uuid, picow_ip_addr):
-    # Get the picow instance with that ip_addr
-    picow_module = core_models.PicowModule.objects.get(ip_address=picow_ip_addr)
+def controller(keychain_uuid, esp_ip_addr):
+    # Get the esp instance with that ip_addr
+    esp_module = core_models.EspModule.objects.get(ip_address=esp_ip_addr)
 
-    print(f"#######: {picow_module}")
+    print(f"#######: {esp_module}")
     
-    # Find the Bicycleholder instance corresponding to picow_module's instance
-    bicycle_holder = picow_module.bicycleholder
+    # Find the Bicycleholder instance corresponding to esp_module's instance
+    bicycle_holder = esp_module.bicycleholder
 
     print(f"#######: {bicycle_holder}")
     
