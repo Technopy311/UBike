@@ -2,6 +2,10 @@
 ProyectoMarraqueta/core/migrations
 ProyectoMarraqueta/picow_api/migrations
 
+#ignore DB
+
+*.sqlite3
+
 # Ingore vscode files
 .vscode
 
