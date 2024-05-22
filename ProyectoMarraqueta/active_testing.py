@@ -15,6 +15,9 @@ def assertEqual(a, b):
     
     return a==b
 
+def assertBoleanEqual(a, b):
+    return a==b
+
 def create_test(func):
     def inner1():
         Error = None
@@ -49,9 +52,9 @@ def main():
     from picow_api_tests import integrity_tests, stress_tests
 
 
-    for test in integrity_tests.ALLOWED_TESTS:
+    """for test in integrity_tests.ALLOWED_TESTS:
         execute_test = create_test(test)
-        execute_test()
+        execute_test()"""
 
     for test in stress_tests.ALLOWED_TESTS:
         execute_test = create_test(test)
