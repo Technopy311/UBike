@@ -15,20 +15,15 @@ class Role(models.TextChoices):
 
 
 class User(AbstractUser):
-    AbstractUser.username = models.CharField(verbose_name="Nombre", max_length=25, null=None)
+    AbstractUser.username = models.CharField(verbose_name="Nombre", max_length=25, null=False, default="A")
     last_name = models.CharField(verbose_name="Apellido", max_length=25, null=None)
     run = models.PositiveBigIntegerField(
         verbose_name="RUN", 
         null=True, 
-        unique=True, 
+        unique=True,
         error_messages={
             'unique': "Ese RUN ya se encuentra registrado."
         })
-    
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            self.role = self.user_type
-            return super().save(*args, **kwargs)
 
 class UsmUser(User):
     AbstractUser.email = models.EmailField(
@@ -158,7 +153,9 @@ class KeyChain(models.Model):
     user = models.ForeignKey("User", on_delete=models.CASCADE)
 
 class BicycleHolder(models.Model):
-    
+    def __str__(self):
+        return f"Holder N. {self.pk}"
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)        
         """
@@ -246,12 +243,12 @@ class BicycleHolder(models.Model):
         return {"slots": []}
 
     tracker = models.JSONField(default=get_default_json)
-    capacity = models.PositiveSmallIntegerField("Capacity", default=1, null=False)
+    capacity = models.SmallIntegerField("Capacity", default=1, null=False)
     location = models.CharField("Location", max_length=30)
     nearest_building = models.CharField("Nearest building", max_length=1, choices=BUILDING_SJ_CHOICES)
-    nearest_guard = models.ForeignKey("Guard", on_delete=models.CASCADE, default=None, null=True)
 
 class EspModule(models.Model):
-    ip_address = models.GenericIPAddressField(protocol='IPv4', default=None, null=True)
+    #ip_address = models.GenericIPAddressField(protocol='IPv4', default=None, null=True)
+    ip_address = models.CharField(max_length=15, null=False, default="0.0.0.0")
     latest_online = models.DateTimeField("Lastest online", null=True)
     bicycleholder = models.OneToOneField(BicycleHolder, on_delete=models.CASCADE, default=None)
