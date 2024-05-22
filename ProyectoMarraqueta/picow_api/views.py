@@ -82,10 +82,10 @@ def controller(keychain_uuid, esp_ip_addr):
                 return ("0.3", None)
     else:
         print("There is bicycle C: - removing it")
-        status = bicycle_holder.del_bicycle(bicycle)
-        if status != -1:
+        aval_index = bicycle_holder.del_bicycle(bicycle)
+        if aval_index != -1:
             print("Bicycle deleted succesfully")
-            return ("1.1", status[1])
+            return ("1.1", aval_index)
         else:
             print("Bicycle not in holder")
             return ("1.2", None)
