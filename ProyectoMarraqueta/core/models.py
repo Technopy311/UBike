@@ -157,7 +157,6 @@ class BicycleHolder(models.Model):
         return f"Holder N. {self.pk}"
 
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)        
         """
             This code below, adds or deletes BicycleHolder slots when saving the instance.
         """
@@ -173,6 +172,7 @@ class BicycleHolder(models.Model):
             else:
                 self_slots = self_slots[:self.capacity]
         
+        super().save(*args, **kwargs)   
         print(f"{self.__str__} modified, slots: {self_slots}")
 
     def check_bicycle(self, bicycle):
