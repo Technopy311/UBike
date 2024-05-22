@@ -6,4 +6,4 @@
 ## Step-Down module
 48.5mm x 23mm
 ## Relay coil
-40mm x 15mm
+40mm x 15mm x 20mm
