@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect
 from django.http import HttpResponse
 import json
 from core import models as core_models
@@ -9,23 +9,40 @@ def auth_user():
 
 
 def controller(keychain_uuid, esp_ip_addr):
-    # Get the esp instance with that ip_addr
-    esp_module = core_models.EspModule.objects.get(ip_address=esp_ip_addr)
-    print(f"#######: {esp_module}")
+    """_summary_
+
+    Args:
+        keychain_uuid (int): keychain UUID
+        esp_ip_addr (int): ESP32 ip address
+
+    Returns:
+        tuple:(code, index to open)
+    """
+    try:
+        # Get the esp instance with that ip_addr
+        esp_module = core_models.EspModule.objects.get(ip_address=esp_ip_addr)
+        print(f"#######: {esp_module}")
+    except core_models.EspModule.DoesNotExist:
+        raise ValueError
     
     # Find the Bicycleholder instance corresponding to esp_module's instance
     bicycle_holder = esp_module.bicycleholder
     print(f"#######: {bicycle_holder}")
-    
-    # Get the KeyChain object related to keychain_uuid
-    keychain = core_models.KeyChain.objects.get(uuid=keychain_uuid)
+
+    try:
+        # Get the KeyChain object related to keychain_uuid
+        keychain = core_models.KeyChain.objects.get(uuid=keychain_uuid)
+    except core_models.KeyChain.DoesNotExist:
+        raise ValueError
     
     # Get the user related to KeyChain instance.
     user = keychain.user
     print(f"#######: {user}")
     
+    
     # Get a list which contains the user's bicycle's PKs
     bicycle = user.bicycle_set.all()[0]
+
     in_holder = bicycle_holder.check_bicycle(bicycle)
 
     if in_holder == -1: 
@@ -61,26 +78,52 @@ def recv(request):
     if request.method == "POST":
         # Receive UUID
         post_data = str(request.body.decode())
-        # Parse json data
-        data = json.loads(post_data)
-        
-        # Obtain the uuid and ip data from json
-        uuid = data['uuid']
-        ipaddr = data['ip']
+        try:
+            # Parse json data
+            data = json.loads(post_data)
+            # Obtain the uuid and ip data from json
+            uuid = data['uuid']
+            ipaddr = data['ip']
+        except Exception:
+            print("## Data received cannot be parsed")
+            response = HttpResponse(
+                status_code=406,
+                closed=True
+            )
+            return response
 
-        # Print log C:
+        # Print log
         print(f"UUID: {uuid}. FROM: {ipaddr}")
 
         # Pass UUID and pico_w's ip address, to controller function.
-        controller_data = controller(uuid, ipaddr)
+        try:
+            controller_data = controller(uuid, ipaddr)
+        except ValueError:
+            print("## Data given is not valid")
+            response = HttpResponse(
+                status_code=406,
+                closed=True
+            )
+            return response
 
-        response = HttpResponse()
-        response.status_code = 200
+        json_data = {
+            "code": controller_data[0],
+            "slot_to_open": controller_data[1]
+        }
 
+        response = HttpResponse(
+            json.dumps(json_data),
+            headers={"Content-Type": "application/json",},
+            status_code=200,
+            closed=True
+        )
+        return response
+    
     else:
         # Return 400 status code
-        response = HttpResponse()
-        response.status_code = 400
-        response.closed = True
+        response = HttpResponse(
+            status_code=400,
+            close=True
+        )
 
     return response
