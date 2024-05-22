@@ -20,6 +20,28 @@ def main():
     from django.core.management import call_command
 
 
+    def create_full_request(uuid, ip_address):
+        """Create a full request to picow_api API endpoint
+
+        Args:
+            uuid (str): keychain UUID
+            ip_address (str): esp32 module IP address
+
+        Returns:
+            HttpRequest: django http request object with full data for endpoint 
+        """
+        request = HttpRequest()
+        request.method="POST"
+        data = {
+            "uuid": uuid, 
+            "ip": ip_address
+        }
+
+        json_data = json.dumps(data)
+        encoded_data = json_data.encode('utf-8')
+        request._body=encoded_data
+        return request
+
     def assertEqual(a, b):
         if a==b:
             print(" + OK +")
@@ -30,19 +52,24 @@ def main():
 
     def create_test(func):
         def inner1():
-            e = None
+            Error = None
+            
             print("// TEST //")
             try:
                 func()
-            except Exception as e:
-                e = e
+            except Exception as E:
+                Error = E
             print("// END TEST")
+            
             print("\nFlushing DB...")
             flush_cmd = flush.Command()
             call_command(flush_cmd, verbosity=0, interactive=False)
             print("FLUSHED!\n")
             
-            print(f"Got Exception: \n{e}")
+            if Error:
+                import traceback
+                print(f"Got Exception: \n{Error}")
+                traceback.print_exception(Error)
         return inner1
 
     def test_recv_not_post_request():
@@ -109,7 +136,6 @@ def main():
         assertEqual(response.status_code, 400)
         assertEqual(response.closed, True)
 
-
     def test_invalid_json_data_format_post_request():
         """
             This test creates a request with a bad Json format,
@@ -138,15 +164,7 @@ def main():
             but the data is invalid, hence the request to API is rejected
         """
 
-        request = HttpRequest()
-        request.method="POST"
-        data = {
-            "uuid": "12345678910", 
-            "ip": "192.168.100.1"
-        }
-        json_data = json.dumps(data)
-        encoded_data = json_data.encode('utf-8')
-        request._body=encoded_data
+        request = create_full_request("12345678", "192.168.100.1")
         
         response = api_views.recv(request)
 
@@ -179,16 +197,7 @@ def main():
             bicycleholder=dummyHolder
         )
 
-        request = HttpRequest()
-        request.method="POST"
-        data = {
-            "uuid": "12345678910", 
-            "ip": ip_addr
-        }
-
-        json_data = json.dumps(data)
-        encoded_data = json_data.encode('utf-8')
-        request._body=encoded_data
+        request=create_full_request("12345678910", ip_addr)
         
         response = api_views.recv(request)
 
@@ -206,16 +215,7 @@ def main():
         dummyUser = core_models.Guard.objects.create()
         dummyKeychain = core_models.KeyChain.objects.create(user=dummyUser, uuid=uuid)
         
-        request = HttpRequest()
-        request.method="POST"
-        data = {
-            "uuid": dummyKeychain.uuid, 
-            "ip": "192.168.100.1"
-        }
-
-        json_data = json.dumps(data)
-        encoded_data = json_data.encode('utf-8')
-        request._body=encoded_data
+        request = create_full_request(dummyKeychain.uuid, "192.168.100.1")
         
         response = api_views.recv(request)
 
@@ -240,25 +240,17 @@ def main():
             nearest_building=nearest_building,
         )
         
+        ip_address = "192.168.100.1"
         dummyModule = core_models.EspModule.objects.create(
-            ip_address="192.168.100.1",
+            ip_address=ip_address,
             latest_online=timezone.now(),
             bicycleholder=dummyHolder
         )
 
         uuid=123456789
         dummyKeychain = core_models.KeyChain.objects.create(user=dummyGuard, uuid=uuid)
-        
-        request = HttpRequest()
-        request.method="POST"
-        data = {
-            "uuid": dummyKeychain.uuid, 
-            "ip": dummyModule.ip_address
-        }
 
-        json_data = json.dumps(data)
-        encoded_data = json_data.encode('utf-8')
-        request._body=encoded_data
+        request = create_full_request(uuid, ip_address)
         
         response = api_views.recv(request)
 
@@ -300,17 +292,7 @@ def main():
             bicycleholder=dummyHolder,
         )
 
-        request = HttpRequest()
-        request.method="POST"
-        data = {
-            "uuid": uuid, 
-            "ip": ip_address
-        }
-
-        json_data = json.dumps(data)
-        encoded_data = json_data.encode('utf-8')
-        request._body=encoded_data
-        
+        request = create_full_request(uuid, ip_address)        
         response = api_views.recv(request)
 
         print(f"Response:\n\tstatus_code:{response.status_code}\n\theaders:{response.headers}\n\tdata:{response.content}")
@@ -379,7 +361,95 @@ def main():
         assertEqual(response.closed, True)
         assertEqual(response_object, expected_object)
 
-    execute_test = create_test(test_valid_request_with_one_place)
+    def test_valid_request_with_one_place_but_2_bicycles():
+        """
+            This test creates a valid Guard, BicycleHolder, EspModule, KeyChain and Bicycle, hence, 
+            the request in the API is successful, there is 1 place available in Bicycle Holder, 
+            but there are two users trying to save the bicycle after each other.
+        """
+        dummyUser = core_models.Professor.objects.create(
+            department="DFIS",
+            username="Prof"
+            )
+        dummyUser2 = core_models.Student.objects.create(
+            career="ICTEL",
+            username="Stu"
+        )
+        
+        capacity = 1
+        location="LOL!#$%"
+        nearest_building = "C"
+        dummyHolder = core_models.BicycleHolder.objects.create(
+            capacity=capacity,
+            location=location,
+            nearest_building=nearest_building,
+        )
+
+        uuid=99999999
+        dummyKeychain = core_models.KeyChain.objects.create(
+            user=dummyUser, 
+            uuid=uuid
+        )
+        uuid2=99999998
+        dummyKeychain2 = core_models.KeyChain.objects.create(
+            user=dummyUser2, 
+            uuid=uuid2
+        )
+
+        dummyBicycle = core_models.Bicycle.objects.create(
+            model="TRX Ultimate",
+            colour="Magenta",
+            bike_type = "TTB",
+            bicy_user=dummyUser,
+        )
+        dummyBicycle2 = core_models.Bicycle.objects.create(
+            model="Avalanche XPS",
+            colour="Red",
+            bike_type="BMX",
+            bicy_user=dummyUser2
+        )
+
+        ip_address = "192.168.100.1"
+        dummyModule = core_models.EspModule.objects.create(
+            ip_address=ip_address,
+            latest_online=(timezone.now()),
+            bicycleholder=dummyHolder,
+        )
+
+        print("** Professor wants to save bicycle: **")
+        request = create_full_request(uuid, ip_address)
+        response = api_views.recv(request)
+
+        print(f"response:\n\tstatus_code:{response.status_code}\n\theaders:{response.headers}\n\tdata:{response.content.decode()}")
+
+        expected_object_a = {
+            "code": "0.1",
+            "slot_to_open": 0
+        }
+        response_object = json.loads(response.content.decode())
+        assertEqual(response.status_code, 200)
+        assertEqual(response.headers, {"Content-Type": "application/json"})
+        assertEqual(response.closed, True)
+        assertEqual(response_object, expected_object_a)
+
+        print("** Student want to save bicycle **")
+        request = create_full_request(uuid2, ip_address)
+        response = api_views.recv(request)
+
+        print(f"response:\n\tstatus_code:{response.status_code}\n\theaders:{response.headers}\n\tdata:{response.content.decode()}")
+
+        expected_object_a = {
+            "code": "0.3",
+            "slot_to_open": None
+        }
+        response_object = json.loads(response.content.decode())
+        assertEqual(response.status_code, 200)
+        assertEqual(response.headers, {"Content-Type": "application/json"})
+        assertEqual(response.closed, True)
+        assertEqual(response_object, expected_object_a)
+    
+
+    execute_test = create_test(test_valid_request_with_one_place_but_2_bicycles)
     execute_test()
 
 
