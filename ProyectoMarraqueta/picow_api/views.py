@@ -66,7 +66,7 @@ def controller(keychain_uuid, esp_ip_addr):
     else:
         print("There is bicycle C: - removing it")
         status = bicycle_holder.del_bicycle(bicycle)
-        if status is not -1:
+        if status != -1:
             print("Bicycle deleted succesfully")
             return ("1.1", status[1])
         else:
@@ -86,10 +86,9 @@ def recv(request):
             ipaddr = data['ip']
         except Exception:
             print("## Data received cannot be parsed")
-            response = HttpResponse(
-                status_code=406,
-                closed=True
-            )
+            response = HttpResponse()
+            response.status_code=406
+            response.close()
             return response
 
         # Print log
@@ -100,10 +99,9 @@ def recv(request):
             controller_data = controller(uuid, ipaddr)
         except ValueError:
             print("## Data given is not valid")
-            response = HttpResponse(
-                status_code=406,
-                closed=True
-            )
+            response = HttpResponse()
+            response.status_code=406
+            response.close()
             return response
 
         json_data = {
@@ -121,9 +119,8 @@ def recv(request):
     
     else:
         # Return 400 status code
-        response = HttpResponse(
-            status_code=400,
-            close=True
-        )
+        response = HttpResponse()
+        response.status_code=400
+        response.close()
 
     return response
