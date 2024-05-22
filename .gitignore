@@ -2,6 +2,8 @@
 ProyectoMarraqueta/core/migrations
 ProyectoMarraqueta/picow_api/migrations
 
+# Ingore vscode files
+.vscode
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
