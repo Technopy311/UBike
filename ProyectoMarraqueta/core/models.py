@@ -56,9 +56,9 @@ class OtherUser(User):
 """ Derivative user models """
 
 class Student(UsmUser):
-    user_type = "STU"
     career = models.CharField("Carrera", max_length=20, default=None, null=True) #TODO CHANGE CAREER TO CHOICES FIELD
     user_type = models.CharField(choices=Role.choices, default=Role.STUDENT, max_length=3)
+
     def __str__(self):
         return "Estudiante " + str(self.run)
     
@@ -186,6 +186,7 @@ class BicycleHolder(models.Model):
         """
         bicycle_pk = bicycle.pk
         self_slots = self.tracker['slots']
+        print(f" $ Holder Slots $:\n{self_slots}")
 
         try:
             return self_slots.index(bicycle_pk)
@@ -202,11 +203,14 @@ class BicycleHolder(models.Model):
             (Int, Int/None): Tuple(Status Code, Empty_Place's index). Status code: 0(success), 1(Bicycle not instance of Bicycle), 2(No empty place)
         """
         self_slots = self.tracker["slots"]
+        print(f" $ Holder Slots $:\n{self_slots}")
         if isinstance(bicycle, Bicycle): # check if bicycle belongs to Bicycleclass
             try:
                 empty_place = self_slots.index(0)
                 self_slots[empty_place] = bicycle.pk
-                return (0, empty_place)
+                print(f" $ Holder Slots (New bicycle) $:\n{self.tracker['slots']} ")
+                self.save()
+                return (0, empty_place) 
             except ValueError:
                 return (2, None)
         else:
@@ -222,11 +226,15 @@ class BicycleHolder(models.Model):
             Int: Available index OR -1 if bicycle not in slots
         """
         self_slots = self.tracker["slots"]
+        print(f" $ Holder Slots $:\n{self_slots}")
+
         bicycle_pk = bicycle.pk
         if type(bicycle_pk) == type(0):  # Check if the type of bicycle_pk is int
             try:
                 bicycle_index = self_slots.index(bicycle_pk)
                 self_slots[bicycle_index] = 0
+                print(f" $ Holder Slots (New bicycle) $:\n{self.tracker['slots']} ")
+                self.save()
                 return bicycle_index
             except ValueError:
                 return -1
