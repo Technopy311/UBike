@@ -422,7 +422,7 @@ def main():
 
         print(f"response:\n\tstatus_code:{response.status_code}\n\theaders:{response.headers}\n\tdata:{response.content.decode()}")
 
-        expected_object_a = {
+        expected_object = {
             "code": "0.1",
             "slot_to_open": 0
         }
@@ -430,7 +430,7 @@ def main():
         assertEqual(response.status_code, 200)
         assertEqual(response.headers, {"Content-Type": "application/json"})
         assertEqual(response.closed, True)
-        assertEqual(response_object, expected_object_a)
+        assertEqual(response_object, expected_object)
 
         print("** Student want to save bicycle **")
         request = create_full_request(uuid2, ip_address)
@@ -438,7 +438,7 @@ def main():
 
         print(f"response:\n\tstatus_code:{response.status_code}\n\theaders:{response.headers}\n\tdata:{response.content.decode()}")
 
-        expected_object_a = {
+        expected_object = {
             "code": "0.3",
             "slot_to_open": None
         }
@@ -446,10 +446,222 @@ def main():
         assertEqual(response.status_code, 200)
         assertEqual(response.headers, {"Content-Type": "application/json"})
         assertEqual(response.closed, True)
-        assertEqual(response_object, expected_object_a)
+        assertEqual(response_object, expected_object)
     
 
-    execute_test = create_test(test_valid_request_with_one_place_but_2_bicycles)
+    def test_valid_request_with_five_places_and_two_bicycles_only_saving():
+        """
+            This test creates a valid Guard, BicycleHolder, EspModule, KeyChain and Bicycle, hence, 
+            the request in the API is successful, there is 5 places availables in Bicycle Holder, 
+            and there are two users trying to save the bicycle after each other.
+        """
+        
+        dummyUser = core_models.Professor.objects.create(
+            department="DFIS",
+            username="Prof"
+            )
+        dummyUser2 = core_models.Student.objects.create(
+            career="ICTEL",
+            username="Stu"
+        )
+        
+        capacity = 5
+        location="LOL!#$%"
+        nearest_building = "C"
+        dummyHolder = core_models.BicycleHolder.objects.create(
+            capacity=capacity,
+            location=location,
+            nearest_building=nearest_building,
+        )
+
+        uuid=99999999
+        dummyKeychain = core_models.KeyChain.objects.create(
+            user=dummyUser, 
+            uuid=uuid
+        )
+        uuid2=99999998
+        dummyKeychain2 = core_models.KeyChain.objects.create(
+            user=dummyUser2, 
+            uuid=uuid2
+        )
+
+        dummyBicycle = core_models.Bicycle.objects.create(
+            model="TRX Ultimate",
+            colour="Magenta",
+            bike_type = "TTB",
+            bicy_user=dummyUser,
+        )
+        dummyBicycle2 = core_models.Bicycle.objects.create(
+            model="Avalanche XPS",
+            colour="Red",
+            bike_type="BMX",
+            bicy_user=dummyUser2
+        )
+
+        ip_address = "192.168.100.1"
+        dummyModule = core_models.EspModule.objects.create(
+            ip_address=ip_address,
+            latest_online=(timezone.now()),
+            bicycleholder=dummyHolder,
+        )
+
+        print("** Professor wants to save bicycle: **")
+        request = create_full_request(uuid, ip_address)
+        response = api_views.recv(request)
+
+        print(f"response:\n\tstatus_code:{response.status_code}\n\theaders:{response.headers}\n\tdata:{response.content.decode()}")
+
+        expected_object = {
+            "code": "0.1",
+            "slot_to_open": 0
+        }
+        response_object = json.loads(response.content.decode())
+        assertEqual(response.status_code, 200)
+        assertEqual(response.headers, {"Content-Type": "application/json"})
+        assertEqual(response.closed, True)
+        assertEqual(response_object, expected_object)
+
+        print("** Student want to save bicycle **")
+        request = create_full_request(uuid2, ip_address)
+        response = api_views.recv(request)
+
+        print(f"response:\n\tstatus_code:{response.status_code}\n\theaders:{response.headers}\n\tdata:{response.content.decode()}")
+
+        expected_object = {
+            "code": "0.1",
+            "slot_to_open": 1
+        }
+        response_object = json.loads(response.content.decode())
+        assertEqual(response.status_code, 200)
+        assertEqual(response.headers, {"Content-Type": "application/json"})
+        assertEqual(response.closed, True)
+        assertEqual(response_object, expected_object)
+
+    def test_valid_request_with_five_places_and_two_bicycles_saving_and_removing():
+        """
+            This test creates a valid Guard, BicycleHolder, EspModule, KeyChain and Bicycle, hence, 
+            the request in the API is successful, there is 5 places availables in Bicycle Holder, 
+            and there are two users trying to save the bicycle after each other, and then removing them, in inverse order.
+        """
+        
+        dummyUser = core_models.Professor.objects.create(
+            department="DFIS",
+            username="Prof"
+            )
+        dummyUser2 = core_models.Student.objects.create(
+            career="ICTEL",
+            username="Stu"
+        )
+        
+        capacity = 5
+        location="LOL!#$%"
+        nearest_building = "C"
+        dummyHolder = core_models.BicycleHolder.objects.create(
+            capacity=capacity,
+            location=location,
+            nearest_building=nearest_building,
+        )
+
+        uuid=99999999
+        dummyKeychain = core_models.KeyChain.objects.create(
+            user=dummyUser, 
+            uuid=uuid
+        )
+        uuid2=99999998
+        dummyKeychain2 = core_models.KeyChain.objects.create(
+            user=dummyUser2, 
+            uuid=uuid2
+        )
+
+        dummyBicycle = core_models.Bicycle.objects.create(
+            model="TRX Ultimate",
+            colour="Magenta",
+            bike_type = "TTB",
+            bicy_user=dummyUser,
+        )
+        dummyBicycle2 = core_models.Bicycle.objects.create(
+            model="Avalanche XPS",
+            colour="Red",
+            bike_type="BMX",
+            bicy_user=dummyUser2
+        )
+
+        ip_address = "192.168.100.1"
+        dummyModule = core_models.EspModule.objects.create(
+            ip_address=ip_address,
+            latest_online=(timezone.now()),
+            bicycleholder=dummyHolder,
+        )
+
+        print("** Professor wants to save bicycle: **")
+        request = create_full_request(uuid, ip_address)
+        response = api_views.recv(request)
+
+        print(f"response:\n\tstatus_code:{response.status_code}\n\theaders:{response.headers}\n\tdata:{response.content.decode()}")
+
+        expected_object = {
+            "code": "0.1",
+            "slot_to_open": 0
+        }
+        response_object = json.loads(response.content.decode())
+        assertEqual(response.status_code, 200)
+        assertEqual(response.headers, {"Content-Type": "application/json"})
+        assertEqual(response.closed, True)
+        assertEqual(response_object, expected_object)
+
+        print("** Student wants to save bicycle **")
+        request = create_full_request(uuid2, ip_address)
+        response = api_views.recv(request)
+
+        print(f"response:\n\tstatus_code:{response.status_code}\n\theaders:{response.headers}\n\tdata:{response.content.decode()}")
+
+        expected_object = {
+            "code": "0.1",
+            "slot_to_open": 1
+        }
+        response_object = json.loads(response.content.decode())
+        assertEqual(response.status_code, 200)
+        assertEqual(response.headers, {"Content-Type": "application/json"})
+        assertEqual(response.closed, True)
+        assertEqual(response_object, expected_object)
+
+
+        print("** Student wants to remove bicycle")
+        request = create_full_request(uuid2, ip_address)
+        response = api_views.recv(request)
+
+        expected_object = {
+            "code": "1.1",
+            "slot_to_open": 1
+        }
+
+        response_object = json.loads(response.content.decode())
+        assertEqual(response.status_code, 200)
+        assertEqual(response.headers, {"Content-Type": "application/json"})
+        assertEqual(response.closed, True)
+        assertEqual(response_object, expected_object)
+
+        print("** Professor wants to remove bicycle")
+        request = create_full_request(uuid, ip_address)
+        response = api_views.recv(request)
+
+        expected_object = {
+            "code": "1.1",
+            "slot_to_open": 0
+        }
+
+        response_object = json.loads(response.content.decode())
+        assertEqual(response.status_code, 200)
+        assertEqual(response.headers, {"Content-Type": "application/json"})
+        assertEqual(response.closed, True)
+        assertEqual(response_object, expected_object)
+
+
+
+
+
+
+    execute_test = create_test(test_valid_request_with_five_places_and_two_bicycles_saving_and_removing)
     execute_test()
 
 
