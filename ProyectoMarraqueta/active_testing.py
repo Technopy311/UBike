@@ -30,13 +30,19 @@ def main():
 
     def create_test(func):
         def inner1():
+            e = None
             print("// TEST //")
-            func()
+            try:
+                func()
+            except Exception as e:
+                e = e
             print("// END TEST")
             print("\nFlushing DB...")
             flush_cmd = flush.Command()
             call_command(flush_cmd, verbosity=0, interactive=False)
             print("FLUSHED!\n")
+            
+            print(f"Got Exception: \n{e}")
         return inner1
 
     def test_recv_not_post_request():
@@ -313,16 +319,76 @@ def main():
         assertEqual(response.headers, {"Content-Type": "application/json"})
         assertEqual(response.closed, True)
 
-    execute_test = create_test(test_valid_request_but_no_place)
+    def test_valid_request_with_one_place():
+        """
+            This test creates a valid Guard, BicycleHolder, EspModule, KeyChain and Bicycle, hence, the request in the API is successful, and there is 1 place available in Bicycle Holder
+        """
+        department = "DFIS"
+        dummyUser = core_models.Professor.objects.create(department=department)
+        capacity = 1
+        location="LOL!#$%"
+        nearest_building = "C"
+
+        dummyHolder = core_models.BicycleHolder.objects.create(
+            capacity=capacity,
+            location=location,
+            nearest_building=nearest_building,
+        )
+
+        uuid=123456789
+        dummyKeychain = core_models.KeyChain.objects.create(user=dummyUser, uuid=uuid)
+
+        dummyBicycle = core_models.Bicycle.objects.create(
+            model="TRX",
+            colour="Magenta",
+            bike_type = "TTB",
+            bicy_user=dummyUser,
+        )
+
+        ip_address = "192.168.100.1"
+
+        dummyModule = core_models.EspModule.objects.create(
+            ip_address=ip_address,
+            latest_online=(timezone.now()),
+            bicycleholder=dummyHolder,
+        )
+
+        request = HttpRequest()
+        request.method="POST"
+        data = {
+            "uuid": uuid, 
+            "ip": ip_address
+        }
+
+        json_data = json.dumps(data)
+        encoded_data = json_data.encode('utf-8')
+        request._body=encoded_data
+        
+        response = api_views.recv(request)
+
+        print(f"Response:\n\tstatus_code:{response.status_code}\n\theaders:{response.headers}\n\tdata:{response.content.decode()}")
+
+        expected_object = {
+            "code": "0.1",
+            "slot_to_open": 0
+        }
+
+        response_object = json.loads(response.content.decode())
+        assertEqual(response.status_code, 200)
+        assertEqual(response.headers, {"Content-Type": "application/json"})
+        assertEqual(response.closed, True)
+        assertEqual(response_object, expected_object)
+
+    execute_test = create_test(test_valid_request_with_one_place)
     execute_test()
 
 
 
 
 if __name__ == "__main__":
-    confirmation = input("!! THIS TOOLS INTERACTS WITH PRODUCTION DATABASE !!,\nwrite 'PROCEED WITH TESTING' to confirm execution: ")
+    confirmation = input("!! THIS TOOLS INTERACTS WITH PRODUCTION DATABASE !!,\nwrite 'YES' to confirm execution: ")
 
-    if confirmation=="PROCEED WITH TESTING":
+    if confirmation=="YES":
         main()
     else:
         print("Confirmation Failure.")
