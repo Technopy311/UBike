@@ -12,36 +12,53 @@ def controller(keychain_uuid, esp_ip_addr):
     """_summary_
 
     Args:
-        keychain_uuid (int): keychain UUID
-        esp_ip_addr (int): ESP32 ip address
+        keychain_uuid (str): keychain UUID
+        esp_ip_addr (str): ESP32 ip address
 
     Returns:
         tuple:(code, index to open)
     """
     try:
+        keychain_uuid = int(keychain_uuid)
+    except ValueError:
+        print("Cannot cast keychain_uuid to Integer")
+        raise ValueError
+    
+    print(f"### Data Received by controller:\n\t{keychain_uuid} - {esp_ip_addr}")
+
+    try:
+        # Get the KeyChain object related to keychain_uuid
+        keychain = core_models.KeyChain.objects.get(uuid=keychain_uuid)
+    except core_models.KeyChain.DoesNotExist:
+        print("### Keychain does not exist")
+        raise ValueError
+
+    try:
         # Get the esp instance with that ip_addr
         esp_module = core_models.EspModule.objects.get(ip_address=esp_ip_addr)
         print(f"#######: {esp_module}")
     except core_models.EspModule.DoesNotExist:
+        print("### ESP Module does not exist")
         raise ValueError
     
     # Find the Bicycleholder instance corresponding to esp_module's instance
     bicycle_holder = esp_module.bicycleholder
     print(f"#######: {bicycle_holder}")
 
-    try:
-        # Get the KeyChain object related to keychain_uuid
-        keychain = core_models.KeyChain.objects.get(uuid=keychain_uuid)
-    except core_models.KeyChain.DoesNotExist:
-        raise ValueError
-    
     # Get the user related to KeyChain instance.
     user = keychain.user
     print(f"#######: {user}")
     
-    
     # Get a list which contains the user's bicycle's PKs
-    bicycle = user.bicycle_set.all()[0]
+    try:
+        bicycle = user.bicycle_set.all()[0]
+    except IndexError:
+        print("### No bicycle found associated with user")
+        raise ValueError
+
+    if not bicycle:
+        print("## There are no bicycles associated with user")
+        raise ValueError
 
     in_holder = bicycle_holder.check_bicycle(bicycle)
 
@@ -85,22 +102,22 @@ def recv(request):
             uuid = data['uuid']
             ipaddr = data['ip']
         except Exception:
-            print("## Data received cannot be parsed")
+            print("\n## Data received cannot be parsed\n")
             response = HttpResponse()
             response.status_code=406
             response.close()
             return response
 
         # Print log
-        print(f"UUID: {uuid}. FROM: {ipaddr}")
+        print(f"\n## UUID: {uuid}. FROM: {ipaddr}")
 
         # Pass UUID and pico_w's ip address, to controller function.
         try:
             controller_data = controller(uuid, ipaddr)
         except ValueError:
-            print("## Data given is not valid")
+            print("## Data given is not valid\n")
             response = HttpResponse()
-            response.status_code=406
+            response.status_code=418
             response.close()
             return response
 
@@ -111,14 +128,13 @@ def recv(request):
 
         response = HttpResponse(
             json.dumps(json_data),
-            headers={"Content-Type": "application/json",},
-            status_code=200,
-            closed=True
         )
+        response.headers={"Content-Type": "application/json"}
+        response.status_code=200
+        response.close()
         return response
     
     else:
-        # Return 400 status code
         response = HttpResponse()
         response.status_code=400
         response.close()
