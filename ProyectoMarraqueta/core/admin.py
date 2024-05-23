@@ -10,7 +10,6 @@ class CustomBaseUser(UserAdmin):
                 'Base Fields',
                 {
                     'fields':(
-                        'is_guard',
                         'user_type',
                         'run',
                     ),
