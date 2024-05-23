@@ -2,7 +2,7 @@
 ## Power Supply
 To provide electricity to every module, we are currently using a Huawei branded Modem power supply, which suplies 12 volts at 1.5 amperes (maximum 18 watt per hour)
 
-The current must be divided in 2 ways, one will pass through a Step-Down module, to lower the voltage that will reach the module, the other shall get cut at the Relay module, which will only keep that current going when the main module send the signal to the relay module.
+The current must be divided in 2 ways, one will pass through a Step-Down module (LM2596) to lower the voltage that will reach the central module, the other shall get cut at the Relay module, which will only keep that current going when the central module send the signal to the relay module.
 ## ESP32 Energy consumption and power output
 The ESP32 DevKit ofers up to 3.3 volts at 40 mAmps (20 recomended) per gpio Pin
 ## Energy consumption sheet
