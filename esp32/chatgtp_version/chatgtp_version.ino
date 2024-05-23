@@ -7,7 +7,7 @@
 #define RST_PIN  0
 #define SS_PIN 21 // GPIO 21 ESP32
 
-#define HOLDER_CAPACITY 5
+#define HOLDER_CAPACITY 4
 
 #define SOLENOID_OPEN_TIME 500 // In milliseconds
 
@@ -16,13 +16,12 @@ const char* password = "NHl7g371#0";
 const char* server_url = "http://192.168.100.163:8080/api/recv";
 
 // Associate a solenoid with a pin, this is made to make programming less prone to errors
-const short int solenoid_1 = 12;
-const short int solenoid_2 = 13;
-const short int solenoid_3 = 14;
-const short int solenoid_4 = 15;
-const short int solenoid_5 = 16;
+const short int solenoid_1 = 27;
+const short int solenoid_2 = 26;
+const short int solenoid_3 = 25;
+const short int solenoid_4 = 33;
 
-unsigned short int solenoids[HOLDER_CAPACITY] = {solenoid_1, solenoid_2, solenoid_3, solenoid_4, solenoid_5}; // This array holds each solenoid's pin, ORDER MATTERS
+unsigned short int solenoids[HOLDER_CAPACITY] = {solenoid_1, solenoid_2, solenoid_3, solenoid_4}; // This array holds each solenoid's pin, ORDER MATTERS
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
