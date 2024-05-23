@@ -4,7 +4,7 @@ from django.utils import timezone
 
 from picow_api import views as api_views
 from core import models as core_models
-from active_testing import assertBoleanEqual
+from active_testing import assertBoleanEqual, assertEqual
 
 from random import randrange
 
@@ -195,4 +195,94 @@ def test_creating_saving_and_removing_50_bicycles():
         print(f"\tAttempt No:{fail}, has failed")
 
 
-ALLOWED_TESTS = (test_creating_and_saving_50_bicycles,)
+
+def test_performance_by_registering_timings_when_increasing():
+    """
+        This stress test consists in creating a BicycleHolder with 50 slots, and creating 50 users, 
+        each one with its own bicycle and KeyChain.
+        The test will attempt to save all 50 bicycles one after another into the holder.
+    """
+
+    registering = open("increasing_timings.csv", "w")
+
+    registering.write("Users#,Time(s)\n")
+
+    max_case = 1000
+    
+    capacity = max_case
+    location="LOL!#$%"
+    nearest_building = "C"
+
+    dummyHolder = core_models.BicycleHolder.objects.create(
+        capacity=capacity,
+        location=location,
+        nearest_building=nearest_building,
+    )
+
+    ip_address = "192.168.100.1"
+    dummyModule = core_models.EspModule.objects.create(
+        ip_address=ip_address,
+        latest_online=(timezone.now()),
+        bicycleholder=dummyHolder,
+    )
+    i = 0
+    for user in enumerate(range(max_case)):
+        start_time = time.time()
+        i+=1
+        # Create Professor
+        department = "DFIS"
+        dummyUser = core_models.Professor.objects.create(
+            department=department,
+            username=f"User_attempt_{i}"
+            )    
+        
+        uuid=randrange(100000000,999999999)
+        dummyKeychain = core_models.KeyChain.objects.create(user=dummyUser, uuid=uuid)
+
+        dummyBicycle = core_models.Bicycle.objects.create(
+            model="TRX",
+            colour="Magenta",
+            bike_type = "TTB",
+            bicy_user=dummyUser,
+        )
+        # ATTEMP TO ADD THE USER'S BICYCLE
+        request = create_full_request(uuid, ip_address)
+        response = api_views.recv(request)
+
+        print(f"Response:\n\tstatus_code:{response.status_code}\n\theaders:{response.headers}\n\tdata:{response.content.decode()}")
+
+        expected_object = {
+            "code": "0.1",
+            "slot_to_open": 0
+        }
+
+        response_object = json.loads(response.content.decode())
+        
+        assertEqual(response.status_code, 200)
+        assertEqual(response.headers, {"Content-Type": "application/json"})
+        assertEqual(response.closed, True)
+        assertEqual(response_object, expected_object)
+
+        # ATTEMP TO REMOVE USER'S BICYCLE
+        response = api_views.recv(request)
+
+        print(f"Response:\n\tstatus_code:{response.status_code}\n\theaders:{response.headers}\n\tdata:{response.content.decode()}")
+
+        expected_object = {
+            "code": "1.1",
+            "slot_to_open": 0
+        }
+
+        response_object = json.loads(response.content.decode())
+        
+        assertEqual(response.status_code, 200)
+        assertEqual(response.headers, {"Content-Type": "application/json"})
+        assertEqual(response.closed, True)
+        assertEqual(response_object, expected_object)
+
+        end_time = time.time()
+        registering.write(f"{i},{end_time-start_time}\n")
+
+
+
+ALLOWED_TESTS = (test_performance_by_registering_timings_when_increasing,)
