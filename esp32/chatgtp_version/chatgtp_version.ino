@@ -69,7 +69,7 @@ void controller(const String& code, int slot_position){
     open_solenoid(slot_position);
   } else{
     error_buzzer_sound();
-    Serial.print("No bicycle change.");
+    Serial.print("No bicycle change.\n");
   }
 }
 
@@ -90,9 +90,6 @@ bool sendUUID(const String& uuid, const String& ip) {
   JSONVar response_data_json = JSON.parse(response_data);
 
   controller(response_data_json["code"], response_data_json["slot_to_open"]);
-
-  Serial.print("Response data:\n\t");
-  Serial.print(response_data + "\n\n");
 
   if (httpResponseCode == HTTP_CODE_OK) {
     Serial.println("UUID sent successfully");
