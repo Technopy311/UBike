@@ -1,7 +1,9 @@
-from django.shortcuts import redirect
-from django.http import HttpResponse
 import json
+from datetime import datetime
+from django.http import HttpResponse
+from django.shortcuts import redirect
 from core import models as core_models
+from django.utils.timezone import make_aware
 
 
 def auth_user():
@@ -31,13 +33,6 @@ def controller(keychain_uuid, esp_ip_addr):
         raise ValueError
 
     try:
-        # Get the KeyChain object related to keychain_uuid
-        keychain = core_models.KeyChain.objects.get(uuid=keychain_uuid)
-    except core_models.KeyChain.DoesNotExist:
-        print("### Keychain does not exist")
-        raise ValueError
-
-    try:
         # Get the esp instance with that ip_addr
         esp_module = core_models.EspModule.objects.get(ip_address=esp_ip_addr)
         print(f"#######: Module: {esp_module}")
@@ -45,6 +40,19 @@ def controller(keychain_uuid, esp_ip_addr):
         print("### ESP Module does not exist")
         raise ValueError
     
+    # Refresh esp_module latest_online time
+    naive_datetime = datetime.now()
+    awake_datetime = make_aware(naive_datetime)
+    esp_module.latest_online = awake_datetime
+    esp_module.save()
+
+    try:
+        # Get the KeyChain object related to keychain_uuid
+        keychain = core_models.KeyChain.objects.get(uuid=keychain_uuid)
+    except core_models.KeyChain.DoesNotExist:
+        print("### Keychain does not exist")
+        raise ValueError
+
     # Find the Bicycleholder instance corresponding to esp_module's instance
     bicycle_holder = esp_module.bicycleholder
     print(f"#######: Holder: {bicycle_holder}")
