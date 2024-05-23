@@ -77,6 +77,8 @@ def controller(keychain_uuid, esp_ip_addr):
             
             if status[0] == 0:
                 print("Bicycle added C:")
+                bicycle.is_saved=True
+                bicycle.save()
                 return ("0.1", status[1])
             elif status[0] == 1:
                 print("Bicycle is not a real bicycle!")
@@ -89,6 +91,8 @@ def controller(keychain_uuid, esp_ip_addr):
         aval_index = bicycle_holder.del_bicycle(bicycle)
         if aval_index != -1:
             print("Bicycle deleted succesfully")
+            bicycle.is_saved=False
+            bicycle.save()
             return ("1.1", aval_index)
         else:
             print("Bicycle not in holder")
