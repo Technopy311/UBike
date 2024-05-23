@@ -2,6 +2,15 @@
 ProyectoMarraqueta/core/migrations
 ProyectoMarraqueta/picow_api/migrations
 
+#ingnore django uploads folder
+ProyectoMarraqueta/uploads
+
+#ignore DB
+
+*.sqlite3
+
+# Ingore vscode files
+.vscode
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

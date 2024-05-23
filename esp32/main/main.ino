@@ -13,7 +13,7 @@
 #define RST_PIN  0
 #define SS_PIN 21 // GPIO 21 ESP32
 
-String server_url = "http://192.168.99.193:8080/api/recv";
+String server_url = "http://192.168.100.163:8080/api/recv";
 
 // Create mfrc522 instance of MFRC522 Class
 MFRC522 mfrc522(SS_PIN, RST_PIN);
@@ -92,7 +92,7 @@ void setup() {
     delay(500);
   }
   WiFi.mode(WIFI_STA);
-  WiFi.begin("equisde", "lol1234xd"); // Connect to WiFi Access Point
+  WiFi.begin("FPWOM", "NHl7g371#0"); // Connect to WiFi Access Point
 }
 
 
@@ -111,7 +111,5 @@ void loop() {
       }
   
     }
-    
-    delay(20); //Wait 20 miliseconds, just for development 
   }
 }

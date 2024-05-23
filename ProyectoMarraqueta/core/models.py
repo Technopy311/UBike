@@ -15,20 +15,15 @@ class Role(models.TextChoices):
 
 
 class User(AbstractUser):
-    AbstractUser.username = models.CharField(verbose_name="Nombre", max_length=25, null=None)
+    AbstractUser.username = models.CharField(verbose_name="Nombre", max_length=25, null=False, default="A")
     last_name = models.CharField(verbose_name="Apellido", max_length=25, null=None)
     run = models.PositiveBigIntegerField(
         verbose_name="RUN", 
         null=True, 
-        unique=True, 
+        unique=True,
         error_messages={
             'unique': "Ese RUN ya se encuentra registrado."
         })
-    
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            self.role = self.user_type
-            return super().save(*args, **kwargs)
 
 class UsmUser(User):
     AbstractUser.email = models.EmailField(
@@ -61,9 +56,9 @@ class OtherUser(User):
 """ Derivative user models """
 
 class Student(UsmUser):
-    user_type = "STU"
     career = models.CharField("Carrera", max_length=20, default=None, null=True) #TODO CHANGE CAREER TO CHOICES FIELD
     user_type = models.CharField(choices=Role.choices, default=Role.STUDENT, max_length=3)
+
     def __str__(self):
         return "Estudiante " + str(self.run)
     
@@ -154,13 +149,14 @@ class Bicycle(models.Model):
     image = models.ImageField(upload_to="uploads/", default=None, null=True)
 
 class KeyChain(models.Model):
-    uuid = models.UUIDField(default=None, editable=True)
+    uuid = models.CharField("UUID", default=None, max_length=12)
     user = models.ForeignKey("User", on_delete=models.CASCADE)
 
 class BicycleHolder(models.Model):
-    
+    def __str__(self):
+        return f"Holder N. {self.pk}"
+
     def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)        
         """
             This code below, adds or deletes BicycleHolder slots when saving the instance.
         """
@@ -176,7 +172,8 @@ class BicycleHolder(models.Model):
             else:
                 self_slots = self_slots[:self.capacity]
         
-        print(f"{self.__str__} modified, slots: {self_slots}")
+        super().save(*args, **kwargs)   
+        print(f"Holder.{self.pk} modified, slots: {self_slots}")
 
     def check_bicycle(self, bicycle):
         """Check if the given Bicycle is in the slots arr
@@ -209,7 +206,8 @@ class BicycleHolder(models.Model):
             try:
                 empty_place = self_slots.index(0)
                 self_slots[empty_place] = bicycle.pk
-                return (0, empty_place)
+                self.save()
+                return (0, empty_place) 
             except ValueError:
                 return (2, None)
         else:
@@ -225,11 +223,13 @@ class BicycleHolder(models.Model):
             Int: Available index OR -1 if bicycle not in slots
         """
         self_slots = self.tracker["slots"]
+
         bicycle_pk = bicycle.pk
         if type(bicycle_pk) == type(0):  # Check if the type of bicycle_pk is int
             try:
                 bicycle_index = self_slots.index(bicycle_pk)
                 self_slots[bicycle_index] = 0
+                self.save()
                 return bicycle_index
             except ValueError:
                 return -1
@@ -246,12 +246,12 @@ class BicycleHolder(models.Model):
         return {"slots": []}
 
     tracker = models.JSONField(default=get_default_json)
-    capacity = models.PositiveSmallIntegerField("Capacity", default=1, null=False)
+    capacity = models.SmallIntegerField("Capacity", default=1, null=False)
     location = models.CharField("Location", max_length=30)
     nearest_building = models.CharField("Nearest building", max_length=1, choices=BUILDING_SJ_CHOICES)
-    nearest_guard = models.ForeignKey("Guard", on_delete=models.CASCADE, default=None, null=True)
 
 class EspModule(models.Model):
-    ip_address = models.GenericIPAddressField(protocol='IPv4', default=None, null=True)
+    #ip_address = models.GenericIPAddressField(protocol='IPv4', default=None, null=True)
+    ip_address = models.CharField(max_length=15, null=False, default="0.0.0.0")
     latest_online = models.DateTimeField("Lastest online", null=True)
     bicycleholder = models.OneToOneField(BicycleHolder, on_delete=models.CASCADE, default=None)
