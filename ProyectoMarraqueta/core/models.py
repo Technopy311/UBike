@@ -124,16 +124,16 @@ class Guard(OtherUser):
 """ Non Human Models """
 
 class Bicycle(models.Model):
-    BIKES_CHOICES = {
-        "RB": "Road Bike",
-        "CCB": "Cyclo-cross Bike",
-        "GB": "Grave Bike",
-        "TTB": "Time Trial Bike",
-        "TB": "Touring Bike",
-        "FB": "Folding Bike",
-        "BMX": "BMX",
-        "EB": "Electric Bike"
-    }
+    BIKES_CHOICES = [
+        ("RB", "Road Bike"),
+        ("CCB", "Cyclo-cross Bike"),
+        ("GB", "Grave Bike"),
+        ("TTB", "Time Trial Bike"),
+        ("TB", "Touring Bike"),
+        ("FB", "Folding Bike"),
+        ("BMX", "BMX"),
+        ("EB", "Electric Bike"),
+    ]
 
     model = models.CharField("Bicycle model", max_length=100, null=False)
     colour = models.CharField("Bicycle color", max_length=100, null=False)
@@ -234,13 +234,13 @@ class BicycleHolder(models.Model):
             except ValueError:
                 return -1
 
-    BUILDING_SJ_CHOICES = {
-        "K": "K",
-        "A": "A",
-        "B": "B",
-        "C": "C",
-        "E": "E"
-    }
+    BUILDING_SJ_CHOICES =[
+        ("K", "K",),
+        ("A", "A",),
+        ("B", "B",),
+        ("C", "C",),
+        ("E", "E"),
+    ]
 
     def get_default_json():
         return {"slots": []}
