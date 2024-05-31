@@ -1,0 +1,275 @@
+{% extends "core/base.html" %}
+{% block main %}
+<main class="py-2 my-5 container text-center">
+	<div class="row my-4 whitetext">
+		<h1>¡Bienvenido {Usuario}!</h1>
+	</div>
+	<div class="row my-5">
+		<div class="col-10 mx-auto">
+			<h5 class="whitetext">
+			Bienvenido a UBike, la aplicación que te ayuda a proteger tu
+			bicicleta en la USM
+			</h5>
+		</div>
+	</div>
+	<div class="container">
+		<!--Bicycle SVG-->
+		<div class="row mb-4">
+			<div class="col-2"></div>
+			<div class="col">
+				<img
+					{% load static %}
+					src="{% static 'core/bike.svg' %}"
+					alt=""
+					class="img-fluid"
+					width="300"
+					height="300" />
+			</div>
+			<div class="col-2"></div>
+		</div>
+		<!--Login Modal-->
+		<div class="row my-2">
+			<div class="">
+				<button
+					type="button"
+					class="btn btn-light btn-lg rounded"
+					data-bs-toggle="modal"
+					data-bs-target="#loginModal">
+					Iniciar Sesión
+				</button>
+			</div>
+			<div class="modal" id="loginModal" tabindex="-1">
+				<div
+					class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Iniciar Sesión</h5>
+							<button
+								type="button"
+								class="btn-close"
+								data-bs-dismiss="modal"
+								aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div class="d-flex flex-column mb-3">
+								<form
+									action=""
+									method="POST"
+									class="p-2">
+									<legend>Datos Personales</legend>
+									<!--Correo-->
+									<div class="form-floating mb-3">
+										<input
+											class="form-control"
+											type="text"
+											name="mail"
+											id="mail"
+											placeholder="Correo" />
+										<label for="mail"
+											>Correo</label
+										>
+									</div>
+									<div class="form-floating mb-3">
+										<input
+											type="password"
+											id="loginPassword"
+											class="form-control"
+											placeholder="Contraseña" />
+										<label for="loginPassword"
+											>Contraseña</label
+										>
+									</div>
+									<button
+										type="submit"
+										class="btn btn-primary">
+										Iniciar Sesión
+									</button>
+								</form>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button
+								type="button"
+								class="btn btn-secondary"
+								data-bs-dismiss="modal">
+								Cerrar
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--Register Modal-->
+		<div class="row my-2">
+			<!-- Registro Usuario-->
+			<div class="">
+				<button
+					type="button"
+					class="btn btn-light btn-lg rounded"
+					data-bs-toggle="modal"
+					data-bs-target="#registerModal">
+					Registrarse
+				</button>
+			</div>
+			<div class="modal" id="registerModal" tabindex="-1">
+				<div
+					class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title">Registro</h5>
+							<button
+								type="button"
+								class="btn-close"
+								data-bs-dismiss="modal"
+								aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<div class="d-flex flex-column mb-3">
+								<form
+									action=""
+									method="POST"
+									class="p-2">
+									<legend>Datos Personales</legend>
+									<!--Nombre-->
+									<div class="form-floating mb-3">
+										<input
+											id="nombre"
+											class="form-control"
+											type="text"
+											name="nombre"
+											placeholder="Nombre" />
+										<label for="nombre"
+											>Nombre</label
+										>
+									</div>
+									<!--Apellido-->
+									<div class="form-floating mb-3">
+										<input
+											class="form-control"
+											type="text"
+											name="apellido"
+											id="apellido"
+											placeholder="Apellido" />
+										<label for="apellido"
+											>Apellido</label
+										>
+									</div>
+									<!--Selector Función-->
+									<div class="mb-3">
+										<select
+											class="form-select"
+											aria-label="Default select example">
+											<option selected>
+												Función
+											</option>
+											<option value="STU">
+												Estudiante
+											</option>
+											<option value="PRO">
+												Profesor
+											</option>
+											<option value="ACA">
+												Académico
+											</option>
+											<option value="STA">
+												Funcionario
+											</option>
+											<option value="EXT">
+												Externo
+											</option>
+										</select>
+									</div>
+									<!--RUT-->
+									<div class="form-floating mb-3">
+										<input
+											class="form-control"
+											type="text"
+											name="rut"
+											placeholder="RUT"
+											id="rut" />
+										<label for="rut">RUT</label>
+									</div>
+									<legend class="mt-1">
+										Datos Bicicleta
+									</legend>
+									<!--Modelo Bicicleta-->
+									<div class="form-floating mb-3">
+										<input
+											class="form-control"
+											type="text"
+											id="modelBici"
+											name="modelBici"
+											placeholder="Modelo Bicicleta" />
+										<label for="modelBici"
+											>Modelo Bicicleta</label
+										>
+									</div>
+									<div class="form-floating mb-3">
+										<input
+											class="form-control"
+											type="text"
+											id="marcaBici"
+											name="marcaBici"
+											placeholder="Marca Bicicleta" />
+										<label for="marcaBici"
+											>Marca Bicicleta</label
+										>
+									</div>
+									<div class="form-floating mb-3">
+										<input
+											class="form-control"
+											type="text"
+											id="colorBici"
+											name="colorBici"
+											placeholder="Color Bicicleta" />
+										<label for="colorBici"
+											>Color Bicicleta</label
+										>
+									</div>
+
+									<div class="mb-3">
+										<label
+											class="form-label"
+											for="foto-bici"
+											>Foto Bicicleta</label
+										>
+										<input
+											type="file"
+											class="form-control"
+											id="foto-bici" />
+									</div>
+									<div class="form-floating">
+										<input
+											type="password"
+											id="registerPassword"
+											class="form-control"
+											placeholder="Contraseña" />
+										<label for="registerPassword"
+											>Contraseña</label
+										>
+									</div>
+
+									<button
+										type="submit"
+										class="btn btn-primary mt-4">
+										Crear cuenta
+									</button>
+								</form>
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button
+								type="button"
+								class="btn btn-secondary"
+								data-bs-dismiss="modal">
+								Cerrar
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		
+	</div>
+</main>
+{% endblock %}
