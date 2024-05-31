@@ -13,7 +13,7 @@
 
 const char* ssid = "FPWOM";
 const char* password = "NHl7g371#0";
-const char* server_url = "http://192.168.100.163:8080/api/recv";
+const char* server_url = "http://192.168.100.18:8080/api/recv";
 
 // Associate a solenoid with a pin, this is made to make programming less prone to errors
 const short int solenoid_1 = 27;
@@ -55,10 +55,10 @@ void error_buzzer_sound(){ // Make sounde a not nice sound that indicates someth
 void open_solenoid(int slot_position){
   Serial.print("\tOpening slot: " + String(slot_position)+ "\n");
   digitalWrite(solenoids[slot_position], HIGH);
-  delay(SOLENOID_OPEN_TIME); // Open solenoide for 5 seconds
+  delay(SOLENOID_OPEN_TIME);
   digitalWrite(solenoids[slot_position], LOW);
   Serial.print("\tSlot closed\n");
-}
+  }
 
 void controller(const String& code, int slot_position){
   if (code == "0.1"){ // Code to add bicycle to holder
