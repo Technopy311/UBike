@@ -24,29 +24,10 @@ class User(AbstractUser):
         error_messages={
             'unique': "Ese RUN ya se encuentra registrado."
         })
-
-class UsmUser(User):
     AbstractUser.email = models.EmailField(
-        verbose_name="Email USM", 
+        verbose_name="Correo", 
         max_length=25, 
-        null=None, 
-        unique=True,
-        error_messages={
-            'unique': "Ese correo ya se encuentra registrado."
-        })
-    usm_role = models.PositiveBigIntegerField(
-        verbose_name="ROL USM", 
-        null=True, 
-        default=None,
-        error_messages={
-            'unique': "Ese ROL ya se encuentra regisrado."
-        })
-
-class OtherUser(User):
-    AbstractUser.email = models.EmailField(
-        verbose_name="Email", 
-        max_length=25, 
-        null=None, 
+        null=None,
         unique=True,
         error_messages={
             'unique': "Ese correo ya se encuentra registrado."
@@ -54,63 +35,8 @@ class OtherUser(User):
 
 
 """ Derivative user models """
-
-class Student(UsmUser):
-    career = models.CharField("Carrera", max_length=20, default=None, null=True) #TODO CHANGE CAREER TO CHOICES FIELD
-    user_type = models.CharField(choices=Role.choices, default=Role.STUDENT, max_length=3)
-
-    def __str__(self):
-        return "Estudiante " + str(self.run)
-    
-    class Meta:
-        verbose_name = "Estudiante"
-        verbose_name_plural = "Estudiantes"
-
-class Professor(UsmUser):
-    user_type = models.CharField(choices=Role.choices, default=Role.PROFESSOR, max_length=3)
-    department = models.CharField("Departamento", max_length=20, default=None, null=True)
-    
-    def __str__(self):
-        return "Profesor " + str(self.run)
-    
-    class Meta:
-        verbose_name = "Profesor"
-        verbose_name_plural = "Profesores"
-
-class Academic(OtherUser):
-    user_type = models.CharField(choices=Role.choices, default=Role.ACADEMIC, max_length=3)
-    connection = models.CharField("Conexión con USM", max_length=100, default=None, null=True)
-
-    def __str__(self):
-        return "Academico " + str(self.run)
-    
-    class Meta:
-        verbose_name = "Academico"
-        verbose_name_plural = "Academicos"
-
-class External(OtherUser):
-    user_type = models.CharField(choices=Role.choices, default=Role.EXTERNAL, max_length=3)
-    connection = models.CharField("Conexión con USM", max_length=100, default=None, null=True)
-
-    def __str__(self):
-        return "Externo " + str(self.run)
-    
-    class Meta:
-        verbose_name = "Externo"
-        verbose_name_plural = "Externos"
-
-class Staff(OtherUser):
-    user_type = models.CharField(choices=Role.choices, default=Role.STAFF, max_length=3)
-    charge = models.CharField("Cargo en USM", max_length=40, default=None, null=True)
-    def __str__(self):
-        return "Staff " + str(self.run)
-    
-    class Meta:
-        verbose_name = "Staff"
-        verbose_name_plural = "Staffs"
-
-class Guard(OtherUser):
-    user_type = models.CharField(choices=Role.choices, default=Role.GUARD, max_length=3)
+class Guard(User):
+    connection = models.CharField("Empresa", max_length=40, default=None, null=True)
     def __str__(self):
         return "Guardia " + str(self.run)
     
@@ -124,6 +50,10 @@ class Guard(OtherUser):
 """ Non Human Models """
 
 class Bicycle(models.Model):
+
+    def __str__(self):
+        return f"Bicicleta #{self.pk}"
+
     BIKES_CHOICES = [
         ("RB", "Road Bike"),
         ("CCB", "Cyclo-cross Bike"),
@@ -149,12 +79,16 @@ class Bicycle(models.Model):
     image = models.ImageField(upload_to="uploads/", default=None, null=True)
 
 class KeyChain(models.Model):
+    
+    def __str__(self):
+        return f"Llavero {self.uuid}"
+
     uuid = models.CharField("UUID", default=None, max_length=12)
     user = models.ForeignKey("User", on_delete=models.CASCADE)
 
 class BicycleHolder(models.Model):
     def __str__(self):
-        return f"Holder N. {self.pk}"
+        return f"Bicicletero {self.pk}"
 
     def save(self, *args, **kwargs):
         """
@@ -174,6 +108,7 @@ class BicycleHolder(models.Model):
         
         super().save(*args, **kwargs)   
         print(f"Holder.{self.pk} modified, slots: {self_slots}")
+
 
     def check_bicycle(self, bicycle):
         """Check if the given Bicycle is in the slots arr
@@ -251,7 +186,10 @@ class BicycleHolder(models.Model):
     nearest_building = models.CharField("Nearest building", max_length=1, choices=BUILDING_SJ_CHOICES)
 
 class EspModule(models.Model):
-    #ip_address = models.GenericIPAddressField(protocol='IPv4', default=None, null=True)
+    
+    def __str__(self):
+        return f"Módulo {self.pk}"
+
     ip_address = models.CharField(max_length=15, null=False, default="0.0.0.0")
     latest_online = models.DateTimeField("Lastest online", null=True)
     bicycleholder = models.OneToOneField(BicycleHolder, on_delete=models.CASCADE, default=None)
