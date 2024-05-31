@@ -3,17 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 """ Base User Models """
-
-class Role(models.TextChoices):
-    ADMIN = "ADM", 'Admin'
-    STUDENT = "STU", 'Student'
-    PROFESSOR = "PRO", 'Professor'
-    ACADEMIC = "ACA", 'Academic'
-    EXTERNAL = "EXT", 'External'
-    STAFF = "STA", 'Staff'
-    GUARD = "GUA", 'Guard'
-
-
 class User(AbstractUser):
     AbstractUser.username = models.CharField(verbose_name="Nombre", max_length=25, null=False, default="A")
     last_name = models.CharField(verbose_name="Apellido", max_length=25, null=None)
