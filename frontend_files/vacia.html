@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
-
-  <head>
+	<head>
 		<!--Metadatos-->
 		<meta charset="utf-8" />
 		<meta name="author" content="uBike" />
@@ -19,86 +18,81 @@
 		<!--Titulo-->
 		<title>uBike</title>
 		<!--Icon-->
-		<link rel="icon" type="image/x-icon" href="icon_bici.jpg" />
+		{% load static %}
+		<link rel="icon" type="image/x-icon" href="{% static 'core/icon_bici.jpg' %}" />
 
 		<!--Fonts-->
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Patua+One&family=Playfair+Display:ital,wght@1,600&display=swap"
-			rel="stylesheet" />
-
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Patua+One&family=Playfair+Display:ital,wght@1,600&family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
-			rel="stylesheet" />
-			<!--CSS-->
+		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+		<!--CSS-->
+		{% load static %}
 		<link href="vacia.css" rel="stylesheet" />
+	</head>
 
-  </head>
-
-  <body>
-	
+	<body>
 		<nav class="navbar navbar-expand-lg bg-body-tertiary">
 			<div class="container-fluid">
-				<a class="navbar-brand navbar-sm" href="#">uBike</a>
-				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+				<a class="navbar-brand navbar-sm" href="{% url 'welcome_view' %}">uBike</a>
+				<button
+					class="navbar-toggler"
+					type="button"
+					data-bs-toggle="collapse"
+					data-bs-target="#navbarText"
+					aria-controls="navbarText"
+					aria-expanded="false"
+					aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
 				<div class="collapse navbar-collapse" id="navbarText">
-					<ul class="navbar-nav  container me-auto mb-2 mb-lg-0  ">
-						<li class="nav-item ">
-							<a class="nav-link active" aria-current="page" href="#">Inicio</a>
-						</li>
-						<li class="nav-item ">
-							<a class="nav-link active" href="#">Registrarse</a>
+					<ul class="navbar-nav container me-auto mb-2 mb-lg-0">
+						<li class="nav-item">
+							<a
+								class="nav-link active"
+								aria-current="page"
+								href="{% url 'welcome_view' %}"
+								>Inicio</a
+							>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link active"href="#">Sobre uBike</a>
+							<a class="nav-link active" href="{% url 'user_view' %}">Perfil</a>
 						</li>
-						<li class="nav-item ">
+						<li class="nav-item">
+							<a class="nav-link active" href="{% url 'guard_view' %}">Panel de seguridad</a>
+						</li>
+						<li class="nav-item">
 							<a class="nav-link active" href="#">Ayuda</a>
 						</li>
 					</ul>
-					
 				</div>
 			</div>
 		</nav>
-		
-    <main>
 
+		{%block main%}
+		{% endblock %}
 
-		</main>
-		
-		<footer class="d-flex hola">
-			
-				
-				
-				
-
-					<p>uBike</p>
-					<p>-</p> 
-					<p> 
-						Copyright <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" fill="currentColor" class="bi bi-c-circle" viewBox="0 0 16 16">
-							<path d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8m15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0M8.146 4.992c-1.212 0-1.927.92-1.927 2.502v1.06c0 1.571.703 2.462 1.927 2.462.979 0 1.641-.586 1.729-1.418h1.295v.093c-.1 1.448-1.354 2.467-3.03 2.467-2.091 0-3.269-1.336-3.269-3.603V7.482c0-2.261 1.201-3.638 3.27-3.638 1.681 0 2.935 1.054 3.029 2.572v.088H9.875c-.088-.879-.768-1.512-1.729-1.512"/> 
-						</svg> 2024
-					</p>
-	
-					<p>-</p>
-	
-					<p>
-					<a href="https://github.com/Technopy311/UBike/tree/main" target="_blank" rel="noopener noreferrer" >Repositorio Github</a>  
-		
-					</p>
-				
-				
-
-				
-			
+		<footer class="d-flex custom-footer">
+			<p>uBike</p>
+			<p>-</p>
+			<p>
+				Copyright
+				&copy;
+				2024
+			</p>
+			<p>-</p>
+			<p>
+				<a
+					href="https://github.com/Technopy311/UBike/tree/main"
+					target="_blank"
+					rel="noopener noreferrer"
+					>Github
+				</a>
+			</p>
 		</footer>
-		
-		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"crossorigin="anonymous"></script>
-  </body>
 
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+			crossorigin="anonymous"></script>
+	</body>
 </html>
