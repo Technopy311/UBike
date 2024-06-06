@@ -1,6 +1,6 @@
-<mxfile host="Electron" modified="2024-05-30T21:41:09.383Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.4.8 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="V469afIyXBGEAyXTuPY7" version="24.4.8" type="device">
+<mxfile host="Electron" modified="2024-06-06T01:58:36.562Z" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.4.8 Chrome/124.0.6367.207 Electron/30.0.6 Safari/537.36" etag="XdVSDQI5EOhJgCDdofhR" version="24.4.8" type="device">
   <diagram name="Page-1" id="2YBvvXClWsGukQMizWep">
-    <mxGraphModel dx="1368" dy="838" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
+    <mxGraphModel dx="1384" dy="838" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -73,9 +73,9 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="hNWl9owBEaFHa4xk389I-13" value="Solicitar&amp;nbsp;&lt;div style=&quot;font-size: 16px;&quot;&gt;Instancia bicicletero&lt;/div&gt;&lt;div style=&quot;font-size: 16px;&quot;&gt;(related to module ip address)&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=16;" parent="hNWl9owBEaFHa4xk389I-12" vertex="1" connectable="0">
+        <mxCell id="hNWl9owBEaFHa4xk389I-13" value="Solicitar&amp;nbsp;&lt;div style=&quot;font-size: 16px;&quot;&gt;Instancia bicicletero&lt;/div&gt;&lt;div style=&quot;font-size: 16px;&quot;&gt;(relacionada a dirección&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;font-size: 16px;&quot;&gt;ip del módulo)&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=16;" parent="hNWl9owBEaFHa4xk389I-12" vertex="1" connectable="0">
           <mxGeometry x="-0.0008" y="1" relative="1" as="geometry">
-            <mxPoint x="2" y="1" as="offset" />
+            <mxPoint x="2" y="-19" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="hNWl9owBEaFHa4xk389I-17" style="edgeStyle=elbowEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;elbow=vertical;curved=0;entryX=1;entryY=1;entryDx=0;entryDy=0;fontSize=16;" parent="1" source="hNWl9owBEaFHa4xk389I-4" target="hNWl9owBEaFHa4xk389I-16" edge="1">
@@ -97,9 +97,9 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="hNWl9owBEaFHa4xk389I-23" value="Solicitar Usuario&lt;div style=&quot;font-size: 16px;&quot;&gt;(related to uuid)&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=16;" parent="hNWl9owBEaFHa4xk389I-22" vertex="1" connectable="0">
+        <mxCell id="hNWl9owBEaFHa4xk389I-23" value="Solicitar Usuario&lt;div style=&quot;font-size: 16px;&quot;&gt;(relacionado al llavero asociado a la uuid)&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=16;" parent="hNWl9owBEaFHa4xk389I-22" vertex="1" connectable="0">
           <mxGeometry x="-0.229" y="-2" relative="1" as="geometry">
-            <mxPoint x="18" y="-2" as="offset" />
+            <mxPoint x="18" y="8" as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="hNWl9owBEaFHa4xk389I-25" value="" style="group;fontSize=16;" parent="1" vertex="1" connectable="0">
@@ -146,7 +146,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="hNWl9owBEaFHa4xk389I-47" value="RESPONSE (200)&lt;div style=&quot;font-size: 16px;&quot;&gt;json: slot a abrir&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=16;" parent="hNWl9owBEaFHa4xk389I-46" vertex="1" connectable="0">
+        <mxCell id="hNWl9owBEaFHa4xk389I-47" value="RESPONSE (200)&lt;div&gt;&lt;br&gt;&lt;div style=&quot;font-size: 16px;&quot;&gt;json:&amp;nbsp;código de status,&amp;nbsp;&lt;/div&gt;&lt;div style=&quot;font-size: 16px;&quot;&gt;slot a abrir&lt;/div&gt;&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=16;" parent="hNWl9owBEaFHa4xk389I-46" vertex="1" connectable="0">
           <mxGeometry x="0.1585" relative="1" as="geometry">
             <mxPoint x="15" y="-20" as="offset" />
           </mxGeometry>
@@ -167,7 +167,7 @@
         <mxCell id="hNWl9owBEaFHa4xk389I-50" value="Se abre la cerradura correspondiente al slot disponible" style="rounded=0;whiteSpace=wrap;html=1;fontSize=16;" parent="1" vertex="1">
           <mxGeometry x="330" y="750" width="165" height="60" as="geometry" />
         </mxCell>
-        <mxCell id="zb8dq-fMBUlDlg80A-PL-2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="hNWl9owBEaFHa4xk389I-51" target="hNWl9owBEaFHa4xk389I-50">
+        <mxCell id="zb8dq-fMBUlDlg80A-PL-2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="hNWl9owBEaFHa4xk389I-51" target="hNWl9owBEaFHa4xk389I-50" edge="1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="hNWl9owBEaFHa4xk389I-51" value="Fin" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;fontSize=16;" parent="1" vertex="1">
