@@ -1,0 +1,52 @@
+{% extends 'core/base.html' %}
+
+{% block main %}
+<main class="py-2 my-5 container text-center whitetext">
+    <div class="row my-4">
+        <h1>uBike</h1>
+    </div>
+    <div class="row my-4">
+        <h2>¡Bienvenido {Usuario}!</h2>
+    </div>
+    <div class="row my-5">
+        <div class="col-10 mx-auto">
+            <h5>
+                Datos Bicicleta
+            </h5>
+        </div>
+    </div>
+    <div class="container">
+        <!--Contenido-->
+        <div class="row my-5">
+            <div class="col-10 mx-auto">
+                <!-- Secciones de caracteristicas de la bicicleta -->
+                <div class="mb-3">
+                    <h6>Modelo:</h6>
+                    <p><!-- Información del modelo de la bicicleta desde la base de datos --></p>
+                </div>
+                <div class="mb-3">
+                    <h6>Color:</h6>
+                    <p><!-- Información del color de la bicicleta desde la base de datos --></p>
+                </div>
+                <div class="mb-3">
+                    <h6>Estado:</h6>
+                    <p><!-- Información del estado de la bicicleta desde la base de datos --></p>
+                </div>
+                <div class="mb-3">
+                    <h6>Bicicletero:</h6>
+                    <p><!-- Información del bicicletero de la bicicleta desde la base de datos --></p>
+                </div>
+                <div class="mb-3">
+                    <h6>Tu bicicleta:</h6>
+                    {% load static %}
+                    <img src="{% static 'core/bike.svg' %}" width="200px" height="200px" alt="Foto de tu bicicleta" class="img-fluid" />
+                </div>
+                <div class="mb-3">
+                    <h6>Ubicación:</h6>
+                    <p><!-- Información de la ubicación desde la base de datos --></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

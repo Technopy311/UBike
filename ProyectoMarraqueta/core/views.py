@@ -5,7 +5,7 @@ def welcome_view(request):
     return render(request, 'core/welcome.html')
 
 def user_view(request):
-    return render(request, 'core/welcome.html')
+    return render(request, 'core/vista_usuario.html')
 
 def user_register(request): # View which receives from / to register
     pass
