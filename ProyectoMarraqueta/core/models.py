@@ -64,7 +64,7 @@ class Bicycle(models.Model):
     )
     bicy_user = models.ForeignKey("User", on_delete=models.CASCADE)
     is_saved = models.BooleanField("Am I saved?", default=False)
-
+    creation_datetime = models.DateTimeField("Creation DateTime", auto_created=True, default=None)
     image = models.ImageField(upload_to="uploads/", default=None, null=True)
 
 class KeyChain(models.Model):
