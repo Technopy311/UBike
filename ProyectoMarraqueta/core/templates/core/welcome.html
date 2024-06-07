@@ -53,7 +53,7 @@
 						<div class="modal-body">
 							<div class="d-flex flex-column mb-3">
 								<form
-									action=""
+									action="{% url 'login' %}"
 									method="POST"
 									class="p-2">
 									<legend>Datos Personales</legend>
@@ -74,6 +74,7 @@
 											type="password"
 											id="loginPassword"
 											class="form-control"
+											name="password"
 											placeholder="Contraseña" />
 										<label for="loginPassword"
 											>Contraseña</label
