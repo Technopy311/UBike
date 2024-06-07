@@ -2,9 +2,12 @@ from django.shortcuts import render, redirect
 from . import models as core_models
 from django.db.models import Q
 
+from django.contrib.auth.decorators import login_required
+
 def welcome_view(request):
     return render(request, 'core/welcome.html')
 
+@login_required
 def user_view(request):
     return render(request, 'core/vista_usuario.html')
 
