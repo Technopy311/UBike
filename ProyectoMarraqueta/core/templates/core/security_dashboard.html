@@ -9,7 +9,7 @@
 		</div>
 
 		<div class="row my-2 mx-auto">
-			<form class="container-fluid">
+			<form class="container-fluid" action="{% url 'guard_view' %}" method="post">
 				<div class="input-group">
 					<span class="input-group-text" id="basic-addon1">
 						<svg
@@ -28,7 +28,8 @@
 						class="form-control"
 						placeholder="Buscar bicicleta"
 						aria-label="Buscar bicicleta"
-						aria-describedby="basic-addon1" />
+						aria-describedby="basic-addon1"
+						name="search_bicycle_info" />
 				</div>
 			</form>
 		</div>
@@ -36,6 +37,7 @@
 	<!--Accordions-->
 	<div class="container-fluid py-2 mb-4 mx-2">
 
+		<!--Accordion ultimas bicicletas-->
 		<div class="accordion mt-2 mb-4" id="latestregistered">
 			<div class="accordion-item">
 				<h2 class="accordion-header">
@@ -65,16 +67,17 @@
 							  </tr>
 							</thead>
 							<tbody>
+							{% for bicycle in latest_bicycles %}
 							  <tr>
-								<th scope="row">1</th>
-								<td>Mark</td>
-								<td>Otto</td>
-								<td>9999991</td>
+								<th scope="row">{{ bicycle.pk }}</th>
+								<td>{{ bicycle.bicy_user.username }}</td>
+								<td>{{ bicycle.bicy_user.last_name }}</td>
+								<td>{{ bicycle.bicy_user.run }}</td>
 								<td>
 									<a href="#">Ver detalle</a>
 								</td>
 							  </tr>
-							  
+							{% endfor %}
 							</tbody>
 						  </table>
 					</div>
@@ -82,6 +85,8 @@
 			</div>
 		</div>
 
+		<!-- Accordion resultados de búsqueda -->
+		{% if search_results %}
 		<div class="accordion mb-2 mt-3" id="resultsearch">
 			<div class="accordion-item">
 				<h2 class="accordion-header">
@@ -109,25 +114,29 @@
 								<th scope="col">Rut</th>
 								<th scope="col">Modelo</th>
 								<th scope="col">Color</th>
-								<th scope="col">Ubicación</th>
 							  </tr>
 							</thead>
 							<tbody>
+							{% for result in search_results %}
 							  <tr>
-								<th scope="row">1</th>
-								<td>Mark</td>
-								<td>Otto</td>
-								<td>9999991</td>
-								<td>Avalanche</td>
-								<td>Cyan</td>
-								<td>K</td>
+								<th scope="row">{{forloop.counter}}</th>
+								<!--<td>{{ user.pk }}</td>-->
+								<td>{{ user.username }}</td>
+								<td>{{ user.last_name }}</td>
+								<td>{{ user.run }}</td>
+								{% for bicycle in user.bicycle_set.all %}
+								<td>{{ bicycle.model }}</td>
+								<td>{{ bicycle.colour }}</td>
+								{% endfor %}
 							  </tr>
+							{% endfor %}
 							</tbody>
 						  </table>
 					</div>
 				</div>
 			</div>
 		</div>
+		{% endif %}
 	</div>
 </main>
 {% endblock %}
