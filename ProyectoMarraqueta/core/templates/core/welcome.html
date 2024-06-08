@@ -1,5 +1,4 @@
-{% extends "core/base.html" %}
-{% block main %}
+{% extends "core/base.html" %} {% block main %}
 <main class="py-2 my-5 container text-center">
 	<div class="row my-4 whitetext">
 		<h1>¡Bienvenido a uBike!</h1>
@@ -7,8 +6,8 @@
 	<div class="row my-5">
 		<div class="col-10 mx-auto">
 			<h5 class="whitetext">
-			Bienvenido a UBike, la aplicación que te ayuda a proteger tu
-			bicicleta en la USM
+				Bienvenido a UBike, la aplicación que te ayuda a proteger tu
+				bicicleta en la USM
 			</h5>
 		</div>
 	</div>
@@ -66,9 +65,7 @@
 											name="mail"
 											id="mail"
 											placeholder="Correo" />
-										<label for="mail"
-											>Correo</label
-										>
+										<label for="mail">Correo</label>
 									</div>
 									<div class="form-floating mb-3">
 										<input
@@ -128,9 +125,10 @@
 						<div class="modal-body">
 							<div class="d-flex flex-column mb-3">
 								<form
-									action=""
+									action="{% url 'register' %}"
 									method="POST"
 									class="p-2">
+									{% csrf_token %}
 									<legend>Datos Personales</legend>
 									<!--Nombre-->
 									<div class="form-floating mb-3">
@@ -140,9 +138,7 @@
 											type="text"
 											name="nombre"
 											placeholder="Nombre" />
-										<label for="nombre"
-											>Nombre</label
-										>
+										<label for="nombre">Nombre</label>
 									</div>
 									<!--Apellido-->
 									<div class="form-floating mb-3">
@@ -152,34 +148,7 @@
 											name="apellido"
 											id="apellido"
 											placeholder="Apellido" />
-										<label for="apellido"
-											>Apellido</label
-										>
-									</div>
-									<!--Selector Función-->
-									<div class="mb-3">
-										<select
-											class="form-select"
-											aria-label="Default select example">
-											<option selected>
-												Función
-											</option>
-											<option value="STU">
-												Estudiante
-											</option>
-											<option value="PRO">
-												Profesor
-											</option>
-											<option value="ACA">
-												Académico
-											</option>
-											<option value="STA">
-												Funcionario
-											</option>
-											<option value="EXT">
-												Externo
-											</option>
-										</select>
+										<label for="apellido">Apellido</label>
 									</div>
 									<!--RUT-->
 									<div class="form-floating mb-3">
@@ -191,21 +160,19 @@
 											id="rut" />
 										<label for="rut">RUT</label>
 									</div>
-									<legend class="mt-1">
-										Datos Bicicleta
-									</legend>
-									<!--Modelo Bicicleta-->
 									<div class="form-floating mb-3">
 										<input
 											class="form-control"
-											type="text"
-											id="modelBici"
-											name="modelBici"
-											placeholder="Modelo Bicicleta" />
-										<label for="modelBici"
-											>Modelo Bicicleta</label
-										>
+											type="email"
+											name="email"
+											placeholder="Correo"
+											id="email" />
+										<label for="email">Correo</label>
 									</div>
+									<legend class="mt-1">
+										Datos Bicicleta
+									</legend>
+									<!--Datos Bicicleta-->
 									<div class="form-floating mb-3">
 										<input
 											class="form-control"
@@ -217,6 +184,18 @@
 											>Marca Bicicleta</label
 										>
 									</div>
+									<div class="form-floating mb-3">
+										<input
+											class="form-control"
+											type="text"
+											id="modelBici"
+											name="modelBici"
+											placeholder="Modelo Bicicleta" />
+										<label for="modelBici"
+											>Modelo Bicicleta</label
+										>
+									</div>
+
 									<div class="form-floating mb-3">
 										<input
 											class="form-control"
@@ -237,6 +216,7 @@
 										>
 										<input
 											type="file"
+											name="fotoBici"
 											class="form-control"
 											id="foto-bici" />
 									</div>
@@ -245,7 +225,8 @@
 											type="password"
 											id="registerPassword"
 											class="form-control"
-											placeholder="Contraseña" />
+											placeholder="Contraseña"
+											name="password" />
 										<label for="registerPassword"
 											>Contraseña</label
 										>
@@ -271,7 +252,6 @@
 				</div>
 			</div>
 		</div>
-		
 	</div>
 </main>
 {% endblock %}
