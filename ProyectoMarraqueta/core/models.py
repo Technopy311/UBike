@@ -4,6 +4,7 @@ from django.db import models
 
 """ Base User Models """
 class User(AbstractUser):
+    is_guard = models.BooleanField('is guard', default=None, null=True)
     AbstractUser.username = models.CharField(verbose_name="Nombre", max_length=25, null=False, default="A")
     last_name = models.CharField(verbose_name="Apellido", max_length=25, null=None)
     run = models.PositiveBigIntegerField(
@@ -22,10 +23,10 @@ class User(AbstractUser):
             'unique': "Ese correo ya se encuentra registrado."
         })
 
-
 """ Derivative user models """
 class Guard(User):
     connection = models.CharField("Empresa", max_length=40, default=None, null=True)
+    User.is_guard = True
     def __str__(self):
         return "Guardia " + str(self.run)
     
@@ -43,25 +44,8 @@ class Bicycle(models.Model):
     def __str__(self):
         return f"Bicicleta #{self.pk}"
 
-    BIKES_CHOICES = [
-        ("RB", "Road Bike"),
-        ("CCB", "Cyclo-cross Bike"),
-        ("GB", "Grave Bike"),
-        ("TTB", "Time Trial Bike"),
-        ("TB", "Touring Bike"),
-        ("FB", "Folding Bike"),
-        ("BMX", "BMX"),
-        ("EB", "Electric Bike"),
-    ]
-
     model = models.CharField("Bicycle model", max_length=100, null=False)
     colour = models.CharField("Bicycle color", max_length=100, null=False)
-    bike_type = models.CharField(
-        max_length=3,
-        choices=BIKES_CHOICES,
-        default="RB",
-        null=False
-    )
     bicy_user = models.ForeignKey("User", on_delete=models.CASCADE)
     is_saved = models.BooleanField("Am I saved?", default=False)
     creation_datetime = models.DateTimeField("Creation DateTime", auto_created=True, default=None)
