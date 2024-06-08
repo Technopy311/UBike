@@ -6,7 +6,7 @@
         <h1>uBike</h1>
     </div>
     <div class="row my-4">
-        <h2>¡Bienvenido {Usuario}!</h2>
+        <h2>¡Bienvenido {{name}}!</h2>
     </div>
     <div class="row my-5">
         <div class="col-10 mx-auto">
@@ -22,19 +22,19 @@
                 <!-- Secciones de caracteristicas de la bicicleta -->
                 <div class="mb-3">
                     <h6>Modelo:</h6>
-                    <p><!-- Información del modelo de la bicicleta desde la base de datos --></p>
+                    <p>{{model}}</p>
                 </div>
                 <div class="mb-3">
                     <h6>Color:</h6>
-                    <p><!-- Información del color de la bicicleta desde la base de datos --></p>
+                    <p>{{colour}}</p>
                 </div>
                 <div class="mb-3">
                     <h6>Estado:</h6>
-                    <p><!-- Información del estado de la bicicleta desde la base de datos --></p>
+                    <p>{{status}}</p>
                 </div>
                 <div class="mb-3">
                     <h6>Bicicletero:</h6>
-                    <p><!-- Información del bicicletero de la bicicleta desde la base de datos --></p>
+                    <p>{{holder}}</p>
                 </div>
                 <div class="mb-3">
                     <h6>Tu bicicleta:</h6>
@@ -43,7 +43,7 @@
                 </div>
                 <div class="mb-3">
                     <h6>Ubicación:</h6>
-                    <p><!-- Información de la ubicación desde la base de datos --></p>
+                    <p>{{location}}</p>
                 </div>
             </div>
         </div>
