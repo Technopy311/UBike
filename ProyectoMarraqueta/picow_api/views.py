@@ -5,9 +5,7 @@ from django.shortcuts import redirect
 from core import models as core_models
 from django.utils.timezone import make_aware
 
-
-def auth_user():
-    pass
+from django.views.decorators.csrf import csrf_exempt
 
 
 def controller(keychain_uuid, esp_ip_addr):
@@ -106,7 +104,7 @@ def controller(keychain_uuid, esp_ip_addr):
             print("Bicycle not in holder")
             return ("1.2", None)
 
-
+@csrf_exempt
 def recv(request):
     if request.method == "POST":
         # Receive UUID
