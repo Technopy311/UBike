@@ -1,0 +1,38 @@
+.container {
+   color:black;
+   background-color: white; 
+   font-family: "Noto Sans", sans-serif;
+   filter: drop-shadow(1px 1px 20px rgb(26, 26, 133));
+   
+
+}
+
+.btn {
+    margin-bottom: 15px;
+}
+
+
+
+
+
+.titulo {
+    font-size: 50px;
+    color: #0369a1;
+}
+
+h1 {
+    
+    font-size: 40px;
+    color: #0369a1;
+}
+
+form {
+    padding: 50px 40px 30px 40px;
+}
+
+
+
+
+
+
+
