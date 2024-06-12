@@ -8,4 +8,4 @@
 ## Relay coil
 40mm x 15mm x 20mm
 ## Case
-120mm x 77mm x 37mm
+130mm x 77mm x 37mm
