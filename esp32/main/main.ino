@@ -1,115 +1,143 @@
-//Include necessary dependencies/libraries
-
-
 #include <WiFi.h>
-#include <assert.h>
-#include <Arduino.h>
 #include <HTTPClient.h>
 #include <Arduino_JSON.h>
-
 #include <SPI.h>
 #include <MFRC522.h>
 
 #define RST_PIN  0
 #define SS_PIN 21 // GPIO 21 ESP32
 
-String server_url = "http://192.168.100.163:8080/api/recv";
+#define HOLDER_CAPACITY 4
 
-// Create mfrc522 instance of MFRC522 Class
+#define SOLENOID_OPEN_TIME 500 // In milliseconds
+
+const char* ssid = "FPWOM";
+const char* password = "NHl7g371#0";
+const char* server_url = "http://192.168.100.18:8080/api/recv";
+
+// Associate a solenoid with a pin, this is made to make programming less prone to errors
+const short int solenoid_1 = 27;
+const short int solenoid_2 = 26;
+const short int solenoid_3 = 25;
+const short int solenoid_4 = 33;
+
+unsigned short int solenoids[HOLDER_CAPACITY] = {solenoid_1, solenoid_2, solenoid_3, solenoid_4}; // This array holds each solenoid's pin, ORDER MATTERS
+
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
-// Create wifi instance of WifiMulti Class
-
-byte nuidPICC[4]; // Init array that will store new NUID
-
-/*
-  Function that sends a post request to the given url
-*/
-bool post_uuid(String url, String uuid, String ipaddr){
-  String ip; // Create ip String
-  HTTPClient http; // Create instance of HTTPClient
-  JSONVar dataObject; // Create json instance of JSONVar
-
-  Serial.print("[HTTP] begin...\n");
-  http.begin(url);
-
-  dataObject["uuid"] = String(uuid); // Add the uid data to the json object
-  dataObject["ip"] = ipaddr; // Add the ip address to the json objet
-
-  /*
-  The json object currently looks as follows:
-
-  {
-    "uuid": uuid,
-    "ip": ipaddr
+bool connectToWiFi() {
+  Serial.println("Connecting to WiFi...");
+  WiFi.begin(ssid, password);
+  int attempts = 0;
+  while (WiFi.status() != WL_CONNECTED && attempts < 10) {
+    delay(750);
+    Serial.println("Retrying...");
+    attempts++;
   }
-  
-  */
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("WiFi connected");
+    return true;
+  } else {
+    Serial.println("Failed to connect to WiFi");
+    return false;
+  }
+}
 
-  String jsonString = JSON.stringify(dataObject); // Cast the json object into String
+void success_buzzer_sound(){ // Make sound a nice pleasing sound that indicates all is fine
+}
 
-  Serial.print("[HTTP] POST... \n");
-  Serial.print("jsonString: ");
-  Serial.print(jsonString);
-  Serial.print("\n");
-  http.addHeader("Content-Type", "application/json"); // Add the application/json HTTP header to the http object
-  int httpResponseCode = http.POST(jsonString); // Execute the POST request and save the HTTP response code into httpResponseCode int variable
-  
-  Serial.print(httpResponseCode); // Print the response code
-  Serial.print("\n");
-  http.end();
+void success_2_buzzer_sound(){ // Make sound another nice pleasing sound that indicates all is fine
+}
+
+void error_buzzer_sound(){ // Make sounde a not nice sound that indicates something is wrong
+}
+
+void open_solenoid(int slot_position){
+  Serial.print("\tOpening slot: " + String(slot_position)+ "\n");
+  digitalWrite(solenoids[slot_position], HIGH);
+  delay(SOLENOID_OPEN_TIME);
+  digitalWrite(solenoids[slot_position], LOW);
+  Serial.print("\tSlot closed\n");
+  }
+
+void controller(const String& code, int slot_position){
+  if (code == "0.1"){ // Code to add bicycle to holder
+    success_buzzer_sound();
+    open_solenoid(slot_position);
+  } else if (code == "1.1"){ // Code to remove bicycle from holder
+    success_2_buzzer_sound();
+    open_solenoid(slot_position);
+  } else{
+    error_buzzer_sound();
+    Serial.print("No bicycle change.\n");
+  }
 }
 
 
-String getID(){
-  if (! mfrc522.PICC_ReadCardSerial()){
+bool sendUUID(const String& uuid, const String& ip) {
+  Serial.println("Sending UUID to server...");
+  JSONVar dataObject;
+  dataObject["uuid"] = uuid;
+  dataObject["ip"] = ip;
+  String jsonString = JSON.stringify(dataObject);
+  HTTPClient http;
+  http.begin(server_url);
+  http.addHeader("Content-Type", "application/json");
+  int httpResponseCode = http.POST(jsonString);
+  String response_data = http.getString();
+  http.end();
+
+  JSONVar response_data_json = JSON.parse(response_data);
+
+  controller(response_data_json["code"], response_data_json["slot_to_open"]);
+
+  if (httpResponseCode == HTTP_CODE_OK) {
+    Serial.println("UUID sent successfully");
+    return true;
+  } else {
+    Serial.print("Failed to send UUID. Error code: ");
+    Serial.println(httpResponseCode);
+    return false;
+  }
+}
+
+String readRFID() {
+  if (!mfrc522.PICC_IsNewCardPresent()) {
     return "";
   }
-  unsigned long hex_num;
-  hex_num = mfrc522.uid.uidByte[0] << 24;
-  hex_num += mfrc522.uid.uidByte[1] << 16;
-  hex_num += mfrc522.uid.uidByte[2] << 8;
-  hex_num += mfrc522.uid.uidByte[3];
-  mfrc522.PICC_HaltA(); // Stop reading
-  return String(hex_num);
+  if (!mfrc522.PICC_ReadCardSerial()) {
+    return "";
+  }
+  String uuid = "";
+  for (byte i = 0; i < mfrc522.uid.size; i++) {
+    uuid += String(mfrc522.uid.uidByte[i] < 0x10 ? "0" : "");
+    uuid += String(mfrc522.uid.uidByte[i], HEX);
+  }
+  mfrc522.PICC_HaltA();
+  return uuid;
 }
-
-
 
 void setup() {
-  Serial.begin(115200); // Begin serial monitor connection
-  Serial.print("\n\n\n");
-
+  Serial.begin(115200);
   SPI.begin();
-  mfrc522.PCD_Init(); // Init mfrc522 rfid reader card
-
-  delay(5);
-  //mfrc522.PCD_DumpVersionToSerial();	// Show details of PCD - MFRC522 Card Reader details
-
-  for(uint8_t t=4; t>0; t--){ // Wait until full boot
-    Serial.printf("[SETUP] WAIT %d...\n", t);
-    Serial.flush();
-    delay(500);
+  mfrc522.PCD_Init();
+  while (!Serial) {}
+  for(int i=0; i<HOLDER_CAPACITY; i++){
+    pinMode(solenoids[i], OUTPUT); // Set every solenoid pin as OUTPUT
   }
-  WiFi.mode(WIFI_STA);
-  WiFi.begin("FPWOM", "NHl7g371#0"); // Connect to WiFi Access Point
+  connectToWiFi();
 }
 
-
 void loop() {
-  Serial.print("Reading C:\n");
-  while(true){
-    //Serial.printf("\nStack:%d,Heap:%lu\n", uxTaskGetStackHighWaterMark(NULL), (unsigned long)ESP.getFreeHeap());
-
-    // Reset the loop if no new card present on the sensor/reader. This saves the entire process when idle.
-    if (mfrc522.PICC_IsNewCardPresent() && (WiFi.status() == WL_CONNECTED)){
-
-      String uid = getID();
-      if(uid != 0){
-        String ipaddr = WiFi.localIP().toString();
-        bool post_status = post_uuid(server_url, uid, ipaddr); // Call the post_uuid function
-      }
-  
+  if (WiFi.status() != WL_CONNECTED) {
+    connectToWiFi();
+  }
+  String uuid = readRFID();
+  if (uuid != "") {
+    String ip = WiFi.localIP().toString();
+    if (sendUUID(uuid, ip)) {
+      delay(200); // Delay to avoid sending data too frequently
     }
   }
+  delay(20); // Delay between RFID scans
 }
