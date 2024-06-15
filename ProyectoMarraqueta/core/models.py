@@ -158,6 +158,9 @@ class BicycleHolder(models.Model):
     capacity = models.SmallIntegerField("Capacity", default=1, null=False)
     location = models.CharField("Location", max_length=30)
     nearest_building = models.CharField("Nearest building", max_length=1, choices=BUILDING_SJ_CHOICES)
+    coord_x = models.FloatField("X Coordinate location", default=None, null=True)
+    coord_y = models.FloatField("Y Coordinate location", default=None, null=True)
+    
 
 class EspModule(models.Model):
     
