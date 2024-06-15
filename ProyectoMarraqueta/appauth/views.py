@@ -1,7 +1,11 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from core import models as core_models
 from django.core.exceptions import PermissionDenied
+from django.core.files.images import ImageFile
+from django.conf import settings
+from django.db import IntegrityError
+from pathlib import Path
 
 def custom_login(request, next=None):
     if request.method == "POST":
@@ -31,8 +35,12 @@ def custom_login(request, next=None):
         return redirect('welcome_view')
 
 def custom_register(request, next=None):
-    return redirect('welcome_view')
+    context = {
+        'errormsg': None
+    }
+    
     if request.method == "POST":
+        
         nombre = request.POST["nombre"]
         apellido = request.POST["apellido"]
         rut = request.POST["rut"]
@@ -42,9 +50,9 @@ def custom_register(request, next=None):
         modelBici = request.POST["modelBici"]
         marcaBici = request.POST["marcaBici"]
         colorBici = request.POST["colorBici"]
-        #fotoBici = request.FILES["fotoBici"]
-        print(request.FILES)
-
+        fotoBici = request.FILES["fotoBici"]
+        
+        # Create new user
         try:
             usuario = core_models.User(
                 username = nombre,
@@ -54,27 +62,42 @@ def custom_register(request, next=None):
                 email=email,
             )
             usuario.save()
-        except Exception:
-            pass
-
-        try:
-            bicicleta = core_models.Bicycle(
-                model=(str(marcaBici)+'-'+str(modelBici)),
-                colour=colorBici,
-                bicy_user=usuario,
-                image=fotoBici,
-            )
+        except ValueError:
+            context['errormsg'] = 'Datos inválidos.'
+        except IntegrityError:
+            context['errormsg'] = 'Datos ya registrados.'
+        
+        # Save image
+        image_path = settings.MEDIA_ROOT + fotoBici.name
+        
+        destination = open(image_path, 'wb+')
+        for chunk in fotoBici.chunks():
+            destination.write(chunk)
+        destination.close()
+        
+        path = Path(image_path)
+        # Save bicycle
+        bicicleta = core_models.Bicycle(
+            model=(str(marcaBici)+'-'+str(modelBici)),
+            colour=colorBici,
+            bicy_user=core_models.User.objects.get(email=email),
+            image=None,
+        )
+        
+        with path.open(mode="rb") as f:
+            bicicleta.image = ImageFile(f, name=path.name)
             bicicleta.save()
-        except Exception:
-            pass
-
+        
+        
+        
+        return redirect('welcome_view')
     else:
         return redirect('welcome_view')
 
 def changepass(request):
     pass
 
-def logout(request, next):
+def custom_logout(request, next=None):
     if request.method == "POST":
         if request.user.is_authenticated:
             logout(request)
