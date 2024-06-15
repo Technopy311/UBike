@@ -26,8 +26,8 @@ def user_view(request):
         "holder": 0,
         "nearby": holder.nearest_building,
         "image_url": bicycle.image.url,
-        "holder_x": None,
-        "holder_y": None,
+        "holder_x_coord": holder.coord_x,
+        "holder_y_coord": holder.coord_y,
     }
 
     if bicycle.is_saved:

@@ -47,12 +47,14 @@
 				</div>
 			</div>
 		</div>
-		<div class="card card-custom mb-4">
+		{% if holder_x_coord != None %}
+        <div class="card card-custom mb-4">
 			<div class="card-body">
 				<h5 class="card-title">Mapa</h5>
 				<div id="map" style="height: 400px"></div>
 			</div>
 		</div>
+        {% endif %}
 		{% endif %}
 		<div class="card card-custom mb-4">
 			<div class="card-body">
@@ -70,11 +72,11 @@
 {% endblock %} 
 
 {% block insertjs %}
-{% if holder != 0%}
+{% if holder != 0 and holder_x_coord != None %}
 <script>
-    
-	var map = L.map('map').setView([-33.4909888, -70.61878889], 16.5);
-    var marker = L.marker([-33.49138889, -70.61805556]).addTo(map);
+
+	var map = L.map('map').setView([-33.4909888, -70.61878889], 16.5); //viewport USM's San Joaquin coordinates and zoom
+    var marker = L.marker([ {{holder_x_coord}}, {{holder_y_coord}} ]).addTo(map);
     marker.bindPopup("<b>Tu bicicleta está aquí</b>").openPopup();
 	L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
 		maxZoom: 19,
