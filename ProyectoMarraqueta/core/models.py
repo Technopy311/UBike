@@ -50,6 +50,7 @@ class Bicycle(models.Model):
     is_saved = models.BooleanField("Am I saved?", default=False)
     creation_datetime = models.DateTimeField("Creation DateTime", auto_now_add=True, null=True)
     image = models.ImageField(upload_to="", default=None, null=True)
+    holder_pk = models.SmallIntegerField("Holder_PK", null=True, default=None)
 
 class KeyChain(models.Model):
     
