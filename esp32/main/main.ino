@@ -23,6 +23,14 @@ const short int solenoid_4 = 33;
 
 unsigned short int solenoids[HOLDER_CAPACITY] = {solenoid_1, solenoid_2, solenoid_3, solenoid_4}; // This array holds each solenoid's pin, ORDER MATTERS
 
+
+// Set the Output peripherals GPIO pin location
+const int buzzer = 0;
+const int red = 0;
+const int green = 0;
+const int blue = 0;
+const int rgb[3] = {red, green, blue};
+
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
 bool connectToWiFi() {
@@ -44,12 +52,29 @@ bool connectToWiFi() {
 }
 
 void success_buzzer_sound(){ // Make sound a nice pleasing sound that indicates all is fine
+  emit_sound(1, 1);
 }
 
 void success_2_buzzer_sound(){ // Make sound another nice pleasing sound that indicates all is fine
+  emit_sound(2, 2);
 }
 
 void error_buzzer_sound(){ // Make sounde a not nice sound that indicates something is wrong
+  emit_sound(4, 4);
+}
+void rgb_set(int R, int G, int B){ // Set the color of the RGB Led diode
+  digitalWrite(RGB[0], R);
+  digitalWrite(RGB[1], G);
+  digitalWrite(RGB[2], B);
+}
+void emit_sound(int freq, int times){ // Basic buzzer controller. freq means times per second, not sound wave frequency
+  freq = 500/freq;
+  for (int a = 0; a<times; a++){
+    digitalWrite(buzzer, HIGH);
+    delay(freq);
+    digitalWrite(buzzer, LOW);
+    delay(freq);
+  }
 }
 
 void open_solenoid(int slot_position){
@@ -124,6 +149,9 @@ void setup() {
   while (!Serial) {}
   for(int i=0; i<HOLDER_CAPACITY; i++){
     pinMode(solenoids[i], OUTPUT); // Set every solenoid pin as OUTPUT
+  }
+  for(int i=0; i<3; i++){
+    pinMode(rgb[i], OUTPUT); // Set every LED pin as OUTPUT
   }
   connectToWiFi();
 }
