@@ -2,8 +2,8 @@
 ProyectoMarraqueta/core/migrations
 ProyectoMarraqueta/picow_api/migrations
 
-#ingnore django uploads folder
-ProyectoMarraqueta/uploads
+#ingnore django media folder
+ProyectoMarraqueta/media
 
 #ignore DB
 
