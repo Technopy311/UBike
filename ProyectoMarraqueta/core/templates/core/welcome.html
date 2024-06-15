@@ -127,7 +127,8 @@
 								<form
 									action="{% url 'register' %}"
 									method="POST"
-									class="p-2">
+									class="p-2"
+									enctype="multipart/form-data">
 									{% csrf_token %}
 									<legend>Datos Personales</legend>
 									<!--Nombre-->
@@ -211,14 +212,14 @@
 									<div class="mb-3">
 										<label
 											class="form-label"
-											for="foto-bici"
+											for="fotoBici"
 											>Foto Bicicleta</label
 										>
 										<input
 											type="file"
 											name="fotoBici"
 											class="form-control"
-											id="foto-bici" />
+											id="fotoBici" />
 									</div>
 									<div class="form-floating">
 										<input
