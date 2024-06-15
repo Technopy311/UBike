@@ -16,19 +16,23 @@ def user_view(request):
     user = request.user
 
     bicycle = user.bicycle_set.get()
+    holder = core_models.BicycleHolder.objects.get(pk=bicycle.holder_pk)
 
     context = {
         "name": user.username,
         "model": bicycle.model,
         "colour": bicycle.colour,
-        "status": "No guardada",
-        "holder": "X__X",
-        "location": "X__X",
+        "status": False,
+        "holder": 0,
+        "nearby": holder.nearest_building,
+        "image_url": bicycle.image.url,
+        "holder_x": None,
+        "holder_y": None,
     }
 
     if bicycle.is_saved:
-        context["status"] = "Guardada"
-
+        context["status"] = True
+        context["holder"] = bicycle.holder_pk
     return render(request, 'core/vista_usuario.html', context=context)
 
 

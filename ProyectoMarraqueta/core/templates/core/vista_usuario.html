@@ -1,52 +1,86 @@
-{% extends 'core/base.html' %}
+{% extends 'core/base.html' %} {% block main %}
+<main class="py-5 my-5 container">
+	<!-- Encabezado -->
+	<header class="text-center mb-5">
+		<h2 class="welcome-message whitetext">¡Bienvenido, {{name}}!</h2>
+	</header>
 
-{% block main %}
-<main class="py-2 my-5 container text-center whitetext">
-    <div class="row my-4">
-        <h1>uBike</h1>
-    </div>
-    <div class="row my-4">
-        <h2>¡Bienvenido {{name}}!</h2>
-    </div>
-    <div class="row my-5">
-        <div class="col-10 mx-auto">
-            <h5>
-                Datos Bicicleta
-            </h5>
-        </div>
-    </div>
-    <div class="container">
-        <!--Contenido-->
-        <div class="row my-5">
-            <div class="col-10 mx-auto">
-                <!-- Secciones de caracteristicas de la bicicleta -->
-                <div class="mb-3">
-                    <h6>Modelo:</h6>
-                    <p>{{model}}</p>
-                </div>
-                <div class="mb-3">
-                    <h6>Color:</h6>
-                    <p>{{colour}}</p>
-                </div>
-                <div class="mb-3">
-                    <h6>Estado:</h6>
-                    <p>{{status}}</p>
-                </div>
-                <div class="mb-3">
-                    <h6>Bicicletero:</h6>
-                    <p>{{holder}}</p>
-                </div>
-                <div class="mb-3">
-                    <h6>Tu bicicleta:</h6>
-                    {% load static %}
-                    <img src="{% static 'core/bike.svg' %}" width="200px" height="200px" alt="Foto de tu bicicleta" class="img-fluid" />
-                </div>
-                <div class="mb-3">
-                    <h6>Ubicación:</h6>
-                    <p>{{location}}</p>
-                </div>
-            </div>
-        </div>
-    </div>
+	<!-- Sección de Datos Bicicleta -->
+	<section class="text-center mb-5">
+		<h3 class="whitetext">Datos de tu Bicicleta</h3>
+	</section>
+
+	<!-- Contenido -->
+	<div class="col-10 mx-auto">
+		<!-- Información de la bicicleta -->
+		<div class="card card-custom mb-4">
+			<div class="card-body">
+				<h5 class="card-title">Modelo:</h5>
+				<p class="card-text">{{model}}</p>
+			</div>
+		</div>
+		<div class="card card-custom mb-4">
+			<div class="card-body">
+				<h5 class="card-title">Color:</h5>
+				<p class="card-text">{{colour}}</p>
+			</div>
+		</div>
+		<div class="card card-custom mb-4">
+			<div class="card-body">
+				<h5 class="card-title">Estado:</h5>
+				{% if status %}
+				<p class="card-text">Guardada</p>
+				{% else %}
+				<p class="card-text">No guardada</p>
+				{% endif %}
+			</div>
+		</div>
+		{% if holder != 0 %}
+		<div class="card card-custom mb-4">
+			<div class="card-body">
+				<h5 class="card-title">Ubicación:</h5>
+				<div class="location-info">
+					<i class="bi bi-geo-alt-fill"></i>
+					<p class="card-text">
+						Bicicletero Nro. {{holder}} cerca del edificio {{nearby}}.
+					</p>
+				</div>
+			</div>
+		</div>
+		<div class="card card-custom mb-4">
+			<div class="card-body">
+				<h5 class="card-title">Mapa</h5>
+				<div id="map" style="height: 400px"></div>
+			</div>
+		</div>
+		{% endif %}
+		<div class="card card-custom mb-4">
+			<div class="card-body">
+				<h5 class="card-title">Tu bicicleta:</h5>
+				<img src="{{image_url}}" class="img-fluid rounded mb-3" />
+			</div>
+		</div>
+	</div>
+
+	<!-- Botón de editar datos -->
+	<div class="edit-button">
+		<button type="button" class="btn btn-primary">Editar Datos</button>
+	</div>
 </main>
+{% endblock %} 
+
+{% block insertjs %}
+{% if holder != 0%}
+<script>
+    
+	var map = L.map('map').setView([-33.4909888, -70.61878889], 16.5);
+    var marker = L.marker([-33.49138889, -70.61805556]).addTo(map);
+    marker.bindPopup("<b>Tu bicicleta está aquí</b>").openPopup();
+	L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+		maxZoom: 19,
+		attribution:
+			'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+	}).addTo(map);
+</script>
+{% endif %}
 {% endblock %}

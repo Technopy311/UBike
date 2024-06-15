@@ -19,21 +19,35 @@
 		<title>uBike</title>
 		<!--Icon-->
 		{% load static %}
-		<link rel="icon" type="image/x-icon" href="{% static 'core/icon_bici.jpg' %}" />
+		<link
+			rel="icon"
+			type="image/x-icon"
+			href="{% static 'core/icon_bici.jpg' %}" />
 
 		<!--Fonts-->
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,100..900;1,100..900&display=swap"
+			rel="stylesheet" />
 		<!--CSS-->
 		{% load static %}
 		<link href="{% static 'core/css/vacia.css' %}" rel="stylesheet" />
+		<link
+			rel="stylesheet"
+			href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+			integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+			crossorigin="" />
 	</head>
 
 	<body>
 		<nav class="navbar navbar-expand-lg bg-body-tertiary">
 			<div class="container-fluid">
-				<a class="navbar-brand navbar-sm" href="{% url 'welcome_view' %}">uBike</a>
+				<a
+					class="navbar-brand navbar-sm"
+					href="{% url 'welcome_view' %}"
+					>uBike</a
+				>
 				<button
 					class="navbar-toggler"
 					type="button"
@@ -55,35 +69,36 @@
 							>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link active" href="{% url 'user_view' %}">Perfil</a>
+							<a
+								class="nav-link active"
+								href="{% url 'user_view' %}"
+								>Perfil</a
+							>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link active" href="#">Ayuda</a>
 						</li>
+						<li class="nav-item">
+							{% if user.is_authenticated %}
+							<form action="{% url 'logout' %}" method="post">
+								{% csrf_token %}
+								<button type="submit" class="btn btn-danger">
+									Cerrar Sesión
+								</button>
+							</form>
+							{% endif %}
+						</li>
 					</ul>
 				</div>
-				{% if user.is_authenticated %}
-					<form action="{% url 'logout' %}" method="post">
-						{% csrf_token %}
-						<button type="submit" class="btn btn-danger">
-							Cerrar Sesión
-						</button>
-					</form>
-				{% endif %}
 			</div>
 		</nav>
 
-		{%block main%}
-		{% endblock %}
+		{%block main%} {% endblock %}
 
 		<footer class="d-flex custom-footer">
 			<p>uBike</p>
 			<p>-</p>
-			<p>
-				Copyright
-				&copy;
-				2024
-			</p>
+			<p>Copyright &copy; 2024</p>
 			<p>-</p>
 			<p>
 				<a
@@ -99,5 +114,12 @@
 			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
 			integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
 			crossorigin="anonymous"></script>
+		<script
+			src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+			integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+			crossorigin=""></script>
+
+		{% block insertjs %}
+		{% endblock %}
 	</body>
 </html>
