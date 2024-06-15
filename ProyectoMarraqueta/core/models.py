@@ -48,8 +48,8 @@ class Bicycle(models.Model):
     colour = models.CharField("Bicycle color", max_length=100, null=False)
     bicy_user = models.ForeignKey("User", on_delete=models.CASCADE)
     is_saved = models.BooleanField("Am I saved?", default=False)
-    creation_datetime = models.DateTimeField("Creation DateTime", auto_created=True, default=None)
-    image = models.ImageField(upload_to="uploads/", default=None, null=True)
+    creation_datetime = models.DateTimeField("Creation DateTime", auto_now_add=True, null=True)
+    image = models.ImageField(upload_to="", default=None, null=True)
 
 class KeyChain(models.Model):
     
