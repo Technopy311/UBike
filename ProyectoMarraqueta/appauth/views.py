@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.password_validation import validate_password
 from core import models as core_models
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.files.images import ImageFile
 from django.conf import settings
 from django.db import IntegrityError
 from pathlib import Path
+
 
 def custom_login(request, next=None):
     if request.method == "POST":
@@ -51,6 +53,12 @@ def custom_register(request, next=None):
         marcaBici = request.POST["marcaBici"]
         colorBici = request.POST["colorBici"]
         fotoBici = request.FILES["fotoBici"]
+       
+        try:
+            validate_password(password)
+        except ValidationError:
+            context['errormsg']= "Contraseña insegura."
+            return render(request, 'core/welcome.html', context)
         
         # Create new user
         try:
@@ -64,8 +72,11 @@ def custom_register(request, next=None):
             usuario.save()
         except ValueError:
             context['errormsg'] = 'Datos inválidos.'
+            return render(request, 'welcome_view', context=context)
         except IntegrityError:
             context['errormsg'] = 'Datos ya registrados.'
+            return render(request, 'welcome_view', context=context)
+   
         
         # Save image
         image_path = settings.MEDIA_ROOT + fotoBici.name
