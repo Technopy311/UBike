@@ -11,13 +11,24 @@
 			</h5>
 		</div>
 	</div>
+	{% if errormsg %}
+	<div class="container my-2 container-fluid ">
+		<div class="row justify-content-md-center">
+			<div class="col-4 alert alert-danger" role="alert">
+				{{errormsg}}
+			</div>
+		</div>
+		
+	</div>
+	{% endif %}	
+
 	<div class="container">
 		<!--Bicycle SVG-->
 		<div class="row mb-4">
 			<div class="col-2"></div>
 			<div class="col">
 				<img
-					{% load static %}
+					{%load static%}
 					src="{% static 'core/bike.svg' %}"
 					alt=""
 					class="img-fluid"
@@ -210,9 +221,7 @@
 									</div>
 
 									<div class="mb-3">
-										<label
-											class="form-label"
-											for="fotoBici"
+										<label class="form-label" for="fotoBici"
 											>Foto Bicicleta</label
 										>
 										<input
