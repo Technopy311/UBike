@@ -29,9 +29,18 @@ const int buzzer = 0;
 const int red = 0;
 const int green = 0;
 const int blue = 0;
-const int rgb[3] = {red, green, blue};
+const int RGB[3] = {red, green, blue};
+
+const int pss = 0; // Primary Secure System pinout
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);
+
+int status = 0;
+// Status codes:
+// 0 : Machine starting
+// 1 : Neutral (Empty)
+// 2 : Neutral (Busy)
+// -1 : Emergency Mode
 
 bool connectToWiFi() {
   Serial.println("Connecting to WiFi...");
@@ -42,7 +51,7 @@ bool connectToWiFi() {
     Serial.println("Retrying...");
     attempts++;
   }
-  if (WiFi.status() == WL_CONNECTED) 
+  if (WiFi.status() == WL_CONNECTED) {
     Serial.println("WiFi connected");
     return true;
   } else {
@@ -87,18 +96,21 @@ void open_solenoid(int slot_position){
 
 void controller(const String& code, int slot_position){
   if (code == "0.1"){ // Code to add bicycle to holder
-    rgb_set(1, 1, 1); //Set LED color to White
+    status = 2;
+    rgb_set(1, 1, 1); // Set LED color to White
     success_buzzer_sound();
     open_solenoid(slot_position);
   } else if (code == "1.1"){ // Code to remove bicycle from holder
-    rgb_set(1, 1, 1); //Set LED color to White
+    status = 1;
+    rgb_set(1, 1, 1); // Set LED color to White
     success_2_buzzer_sound();
     open_solenoid(slot_position);
   } else{
-    rgb_set(1, 1, 0); //Set LED color to Yellow
-    error_buzzer_sound();
     Serial.print("No bicycle change.\n");
+    rgb_set(1, 1, 0); // Set LED color to Yellow
+    error_buzzer_sound();
   }
+  delay(500) // Short delay after output message or action
 }
 
 
@@ -150,15 +162,16 @@ void setup() {
   SPI.begin();
   mfrc522.PCD_Init();
   pinMode(buzzer, OUTPUT);
+  pinMode(pss, INPUT);
   while (!Serial) {}
   for(int i=0; i<HOLDER_CAPACITY; i++){
     pinMode(solenoids[i], OUTPUT); // Set every solenoid pin as OUTPUT
   }
   for(int i=0; i<3; i++){
-    pinMode(rgb[i], OUTPUT); // Set every LED pin as OUTPUT
+    pinMode(RGB[i], OUTPUT); // Set every LED pin as OUTPUT
   }
   rgb_set(1, 1, 1);
-  emit_sound(4, 1);
+  emit_sound(2, 1);
   connectToWiFi();
 }
 
@@ -167,12 +180,31 @@ void loop() {
     rgb_set(1, 0, 0);
     connectToWiFi();
   }
-  String uuid = readRFID();
-  if (uuid != "") {
-    String ip = WiFi.localIP().toString();
-    if (sendUUID(uuid, ip)) {
-      delay(200); // Delay to avoid sending data too frequently
-    }
+  if (status == -1){
+    rgb_set(1, 0, 0);
   }
-  delay(20); // Delay between RFID scans
+  else if (status != -1){
+    // Set the status LED color acording the machine status 
+    if (status == 1){
+      rgb_set(0, 1, 0)
+    }
+    else if (status == 2)
+    {
+      rgb_set(0, 0, 1)
+    }
+    if (digitalRead(pss) != HIGH){ // Enters the emergency mode in case the case lid is open
+      status = -1
+    }
+    else{
+      String uuid = readRFID();
+      if (uuid != "") {
+        emit_sound(4, 1); // Short sound to notify the user that the tag has been scaned
+        String ip = WiFi.localIP().toString();
+        if (sendUUID(uuid, ip)) {
+          delay(200); // Delay to avoid sending data too frequently
+        }
+      }
+    }
+    delay(20); // Delay between RFID scans
+  }
 }
