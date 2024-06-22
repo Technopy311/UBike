@@ -42,7 +42,7 @@ bool connectToWiFi() {
     Serial.println("Retrying...");
     attempts++;
   }
-  if (WiFi.status() == WL_CONNECTED) {
+  if (WiFi.status() == WL_CONNECTED) 
     Serial.println("WiFi connected");
     return true;
   } else {
@@ -87,12 +87,15 @@ void open_solenoid(int slot_position){
 
 void controller(const String& code, int slot_position){
   if (code == "0.1"){ // Code to add bicycle to holder
+    rgb_set(1, 1, 1); //Set LED color to White
     success_buzzer_sound();
     open_solenoid(slot_position);
   } else if (code == "1.1"){ // Code to remove bicycle from holder
+    rgb_set(1, 1, 1); //Set LED color to White
     success_2_buzzer_sound();
     open_solenoid(slot_position);
   } else{
+    rgb_set(1, 1, 0); //Set LED color to Yellow
     error_buzzer_sound();
     Serial.print("No bicycle change.\n");
   }
@@ -146,6 +149,7 @@ void setup() {
   Serial.begin(115200);
   SPI.begin();
   mfrc522.PCD_Init();
+  pinMode(buzzer, OUTPUT);
   while (!Serial) {}
   for(int i=0; i<HOLDER_CAPACITY; i++){
     pinMode(solenoids[i], OUTPUT); // Set every solenoid pin as OUTPUT
@@ -153,11 +157,14 @@ void setup() {
   for(int i=0; i<3; i++){
     pinMode(rgb[i], OUTPUT); // Set every LED pin as OUTPUT
   }
+  rgb_set(1, 1, 1);
+  emit_sound(4, 1);
   connectToWiFi();
 }
 
 void loop() {
   if (WiFi.status() != WL_CONNECTED) {
+    rgb_set(1, 0, 0);
     connectToWiFi();
   }
   String uuid = readRFID();
