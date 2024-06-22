@@ -193,6 +193,7 @@ void loop() {
       rgb_set(0, 0, 1)
     }
     if (digitalRead(pss) != HIGH){ // Enters the emergency mode in case the case lid is open
+      // Send status update to server
       status = -1
     }
     else{
