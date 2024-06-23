@@ -29,9 +29,9 @@ const int buzzer = 0;
 const int red = 0;
 const int green = 0;
 const int blue = 0;
-const int RGB[3] = {red, green, blue};
+const int RGBpin[3] = {red, green, blue};
 
-const int pss = 0; // Primary Secure System pinout
+const int LidCheck = 0; // Lid closure check
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
@@ -81,9 +81,9 @@ void error_buzzer_sound(){ // Make sounde a not nice sound that indicates someth
   emit_sound(4, 4);
 }
 void rgb_set(int R, int G, int B){ // Set the color of the RGB Led diode
-  digitalWrite(RGB[0], R);
-  digitalWrite(RGB[1], G);
-  digitalWrite(RGB[2], B);
+  digitalWrite(RGBpin[0], R);
+  digitalWrite(RGBpin[1], G);
+  digitalWrite(RGBpin[2], B);
 }
 
 void open_solenoid(int slot_position){
@@ -162,13 +162,13 @@ void setup() {
   SPI.begin();
   mfrc522.PCD_Init();
   pinMode(buzzer, OUTPUT);
-  pinMode(pss, INPUT);
+  pinMode(LidCheck, INPUT);
   while (!Serial) {}
   for(int i=0; i<HOLDER_CAPACITY; i++){
     pinMode(solenoids[i], OUTPUT); // Set every solenoid pin as OUTPUT
   }
   for(int i=0; i<3; i++){
-    pinMode(RGB[i], OUTPUT); // Set every LED pin as OUTPUT
+    pinMode(RGBpin[i], OUTPUT); // Set every LED pin as OUTPUT
   }
   rgb_set(1, 1, 1);
   emit_sound(2, 1);
@@ -186,15 +186,15 @@ void loop() {
   else if (status != -1){
     // Set the status LED color acording the machine status 
     if (status == 1){
-      rgb_set(0, 1, 0)
+      rgb_set(0, 1, 0);
     }
     else if (status == 2)
     {
-      rgb_set(0, 0, 1)
+      rgb_set(0, 0, 1);
     }
-    if (digitalRead(pss) != HIGH){ // Enters the emergency mode in case the case lid is open
+    if (digitalRead(LidCheck) != HIGH){ // Enters the emergency mode in case the case lid is open
       // Send status update to server
-      status = -1
+      status = -1;
     }
     else{
       String uuid = readRFID();
