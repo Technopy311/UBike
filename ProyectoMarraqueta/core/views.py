@@ -1,11 +1,12 @@
 from django.shortcuts import render, redirect
 from . import models as core_models
 from django.db.models import Q
-
+from tickets import models as tickets_models
 from django.contrib.auth.decorators import login_required
 
 def welcome_view(request):
     return render(request, 'core/welcome.html')
+
 
 @login_required
 def user_view(request):
@@ -71,3 +72,24 @@ def guard_view(request): # View of security dashboard
         
 
     return render(request, 'core/security_dashboard.html', context=context)
+
+
+@login_required
+def emergency_view(request):
+    if request.method == "POST":
+        message = request.POST["message"]
+       
+        try:
+            new_emergency_ticket = tickets_models.EmergencyTicket(
+                user=request.user,
+                message=message
+            )
+        except Exception:
+           return redirect('welcome_view')
+        
+        new_emergency_ticket.save()
+        return render(request, 'core/ayuda.html', context={"msg":"Tu asunto fue enviado exitosamente! Nos comunicaremos contigo a la brevedad."})
+       
+        
+    elif request.method == "GET":
+        return render(request, 'core/ayuda.html')
