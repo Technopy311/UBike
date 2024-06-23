@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
 	"core.apps.CoreConfig",
 	"picow_api.apps.PicowApiConfig",
+    "tickets.apps.TicketsConfig",
 ]
 
 
