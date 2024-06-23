@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+{% block insertcss %} 
+{% load static %}
+<link rel="stylesheet" href="{% static 'core/css/ayuda.css' %}" />
+{% endblock %} 
+{% block main %}
+<main>
+	{% if msg %}
+	<div class="container my-2 container-fluid ">
+		<div class="row justify-content-md-center">
+			<div class="col-4 alert alert-success" role="alert">
+				{{msg}}
+			</div>
+		</div>
+		
+	</div>
+	{% endif %}	
+	<div class="min-vh-100 d-flex align-items-center">
+		<div class="col-md-8 emergencyContainer container">
+			<form class="emergencyForm row g-4" method="post" action="{% url 'emergency_view' %}">
+				{% csrf_token %}
+				<h1 class="responsive-font-example text-center">Formulario de ayuda</h1>
+				<h5 class="text-center">
+					Escribe tu urgencia, y la resolveremos lo antes posible.
+				</h5>
+				<div class="col-md-12">
+					<label for="asunto" class="form-label"><b>Asunto</b></label>
+					<textarea
+						class="form-control"
+						id="asunto"
+						rows="5"
+						name="message"
+						required
+						></textarea>
+				</div>
+				<div class="col-md-12 text-center py-3">
+					<button type="submit" class="btn emergencyBtn btn-primary">
+						Enviar
+					</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</main>
+{% endblock%}
