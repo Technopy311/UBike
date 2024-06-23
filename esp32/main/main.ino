@@ -180,7 +180,7 @@ void loop() {
     rgb_set(1, 0, 0);
     connectToWiFi();
   }
-  if (status == -1){
+  if (status == -1){ // Emergency mode (WIP), it must work on the program loop, because it must mantain comunication to the server
     rgb_set(1, 0, 0);
   }
   else if (status != -1){
