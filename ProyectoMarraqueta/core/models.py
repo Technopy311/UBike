@@ -55,14 +55,14 @@ class Bicycle(models.Model):
 class KeyChain(models.Model):
     
     def __str__(self):
-        return f"Llavero {self.uuid}"
+        return f"Llavero {self.uuid} de {self.user} (#{self.user.pk})"
 
-    uuid = models.CharField("UUID", default=None, max_length=12)
+    uuid = models.CharField("UUID", default=None, max_length=12, null=True)
     user = models.ForeignKey("User", on_delete=models.CASCADE)
 
 class BicycleHolder(models.Model):
     def __str__(self):
-        return f"Bicicletero {self.pk}"
+        return f"Bicicletero #{self.pk} cerca de {self.nearest_building}"
 
     def save(self, *args, **kwargs):
         """
@@ -82,7 +82,6 @@ class BicycleHolder(models.Model):
         
         super().save(*args, **kwargs)   
         print(f"Holder.{self.pk} modified, slots: {self_slots}")
-
 
     def check_bicycle(self, bicycle):
         """Check if the given Bicycle is in the slots arr
@@ -165,7 +164,7 @@ class BicycleHolder(models.Model):
 class EspModule(models.Model):
     
     def __str__(self):
-        return f"Módulo {self.pk}"
+        return f"Módulo {self.pk} ({self.ip_address})"
 
     ip_address = models.CharField(max_length=15, null=False, default="0.0.0.0")
     latest_online = models.DateTimeField("Lastest online", null=True)
