@@ -110,7 +110,7 @@ void controller(const String& code, int slot_position){
     rgb_set(1, 1, 0); // Set LED color to Yellow
     error_buzzer_sound();
   }
-  delay(500) // Short delay after output message or action
+  delay(500); // Short delay after output message or action
 }
 
 
