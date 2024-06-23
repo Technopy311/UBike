@@ -11,3 +11,6 @@ class EmergencyTicket(models.Model):
     user = models.ForeignKey("core.User", on_delete=models.CASCADE)
     datetime = models.DateTimeField("Creation time", auto_now_add=True)
     message = models.CharField("Message", max_length=500, default=None)
+
+    def __str__(self):
+        return f"Ticket #{self.pk} de {self.user.username}"
