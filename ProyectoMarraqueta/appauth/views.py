@@ -69,14 +69,15 @@ def custom_register(request, next=None):
                 password=password,
                 email=email,
             )
-            usuario.save()
         except ValueError:
             context['errormsg'] = 'Datos inválidos.'
-            return render(request, 'welcome_view', context=context)
+            return render(request, 'core/welcome.html', context=context)
         except IntegrityError:
             context['errormsg'] = 'Datos ya registrados.'
-            return render(request, 'welcome_view', context=context)
-   
+            return render(request, 'core/welcome.html', context=context)
+        
+        usuario.save()
+    
         
         # Save image
         image_path = settings.MEDIA_ROOT + fotoBici.name
