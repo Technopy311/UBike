@@ -3,16 +3,9 @@ from django.db import models
 
 
 class RegistryTicket(models.Model):
-    user = models.ForeignKey("core.User", on_delete=models.CASCADE)
     datetime = models.DateTimeField("Creation time", auto_now_add=True)
-    keychain = models.ForeignKey("core.KeyChain", on_delete=models.CASCADE)
-    
-    def save(self, *args, **kwargs):
-        if self.keychain.uuid != None:    
-            self.keychain.user = self.user
-        
-        super(RegistryTicket, self).save(*args, **kwargs)
-
+    keychain = models.ForeignKey("core.KeyChain", on_delete=models.CASCADE, null=True, default=None)
+    solved = models.BooleanField("Solved?", default=False)
 
 class EmergencyTicket(models.Model):
     user = models.ForeignKey("core.User", on_delete=models.CASCADE)
