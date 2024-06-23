@@ -9,7 +9,7 @@
     >Magenta: #FF00FF HEX or (1,0,1) RGB
 - Wrong parking : 
     >Yellow: #FFFF00 HEX or (1,1,0) RGB
-- Accepted / Authenticated :  
+- Accepted / Authenticated / Starting machine :  
     >White: #FFFFFF HEX or (1,1,1) RGB
-- Emergency mode : 
+- Emergency mode / Error in the machine : 
     >Red: #FF0000 HEX or (1,0,0) RGB

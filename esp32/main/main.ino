@@ -29,9 +29,18 @@ const int buzzer = 0;
 const int red = 0;
 const int green = 0;
 const int blue = 0;
-const int rgb[3] = {red, green, blue};
+const int RGBpin[3] = {red, green, blue};
+
+const int LidCheck = 0; // Lid closure check
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);
+
+int status = 0;
+// Status codes:
+// 0 : Machine starting
+// 1 : Neutral (Empty)
+// 2 : Neutral (Busy)
+// -1 : Emergency Mode
 
 bool connectToWiFi() {
   Serial.println("Connecting to WiFi...");
@@ -72,9 +81,9 @@ void error_buzzer_sound(){ // Make sounde a not nice sound that indicates someth
   emit_sound(4, 4);
 }
 void rgb_set(int R, int G, int B){ // Set the color of the RGB Led diode
-  digitalWrite(RGB[0], R);
-  digitalWrite(RGB[1], G);
-  digitalWrite(RGB[2], B);
+  digitalWrite(RGBpin[0], R);
+  digitalWrite(RGBpin[1], G);
+  digitalWrite(RGBpin[2], B);
 }
 
 void open_solenoid(int slot_position){
@@ -87,15 +96,21 @@ void open_solenoid(int slot_position){
 
 void controller(const String& code, int slot_position){
   if (code == "0.1"){ // Code to add bicycle to holder
+    status = 2;
+    rgb_set(1, 1, 1); // Set LED color to White
     success_buzzer_sound();
     open_solenoid(slot_position);
   } else if (code == "1.1"){ // Code to remove bicycle from holder
+    status = 1;
+    rgb_set(1, 1, 1); // Set LED color to White
     success_2_buzzer_sound();
     open_solenoid(slot_position);
   } else{
-    error_buzzer_sound();
     Serial.print("No bicycle change.\n");
+    rgb_set(1, 1, 0); // Set LED color to Yellow
+    error_buzzer_sound();
   }
+  delay(500) // Short delay after output message or action
 }
 
 
@@ -146,26 +161,51 @@ void setup() {
   Serial.begin(115200);
   SPI.begin();
   mfrc522.PCD_Init();
+  pinMode(buzzer, OUTPUT);
+  pinMode(LidCheck, INPUT);
   while (!Serial) {}
   for(int i=0; i<HOLDER_CAPACITY; i++){
     pinMode(solenoids[i], OUTPUT); // Set every solenoid pin as OUTPUT
   }
   for(int i=0; i<3; i++){
-    pinMode(rgb[i], OUTPUT); // Set every LED pin as OUTPUT
+    pinMode(RGBpin[i], OUTPUT); // Set every LED pin as OUTPUT
   }
+  rgb_set(1, 1, 1);
+  emit_sound(2, 1);
   connectToWiFi();
 }
 
 void loop() {
   if (WiFi.status() != WL_CONNECTED) {
+    rgb_set(1, 0, 0);
     connectToWiFi();
   }
-  String uuid = readRFID();
-  if (uuid != "") {
-    String ip = WiFi.localIP().toString();
-    if (sendUUID(uuid, ip)) {
-      delay(200); // Delay to avoid sending data too frequently
-    }
+  if (status == -1){ // Emergency mode (WIP), it must work on the program loop, because it must mantain comunication to the server
+    rgb_set(1, 0, 0);
   }
-  delay(20); // Delay between RFID scans
+  else if (status != -1){
+    // Set the status LED color acording the machine status 
+    if (status == 1){
+      rgb_set(0, 1, 0);
+    }
+    else if (status == 2)
+    {
+      rgb_set(0, 0, 1);
+    }
+    if (digitalRead(LidCheck) != HIGH){ // Enters the emergency mode in case the case lid is open
+      // Send status update to server
+      status = -1;
+    }
+    else{
+      String uuid = readRFID();
+      if (uuid != "") {
+        emit_sound(4, 1); // Short sound to notify the user that the tag has been scaned
+        String ip = WiFi.localIP().toString();
+        if (sendUUID(uuid, ip)) {
+          delay(200); // Delay to avoid sending data too frequently
+        }
+      }
+    }
+    delay(20); // Delay between RFID scans
+  }
 }
