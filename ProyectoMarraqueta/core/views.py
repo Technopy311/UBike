@@ -12,8 +12,9 @@ def welcome_view(request):
 def user_view(request):
     if (request.user.is_guard is not None):
         return redirect('guard_view')
-    else:
-        pass
+    elif request.user.is_superuser:
+        return redirect('welcome_view')
+    
     user = request.user
 
     bicycle = user.bicycle_set.get()
@@ -85,7 +86,7 @@ def emergency_view(request):
                 message=message
             )
         except Exception:
-           return redirect('welcome_view')
+           return render(request, 'core/welcome.html', context={'errormsg': 'Límite de carácteres excedido o Petición Inválida.'})
         
         new_emergency_ticket.save()
         return render(request, 'core/ayuda.html', context={"msg":"Tu asunto fue enviado exitosamente! Nos comunicaremos contigo a la brevedad."})
