@@ -11,7 +11,7 @@ class RegistryTicketAdmin(admin.ModelAdmin):
 admin.site.register(RegistryTicket, RegistryTicketAdmin)
 
 class EmergencyTicketAdmin(admin.ModelAdmin):
-    fields = ["user", "keychain", "datetime"]
+    fields = ["user", "message"]
     list_display = ["user", "datetime"]
     date_hierarchy = "datetime"
 
