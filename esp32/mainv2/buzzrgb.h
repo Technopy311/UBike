@@ -1,19 +1,19 @@
 #include "Arduino.h"
 
 #ifndef BUZZER_PIN
-#define BUZZER_PIN 0
+#define BUZZER_PIN 13
 #endif
 
 #ifndef RED_LED_PIN
-#define RED_LED_PIN 0
+#define RED_LED_PIN 12
 #endif
 
 #ifndef BLUE_LED_PIN
-#define BLUE_LED_PIN 0
+#define BLUE_LED_PIN 27
 #endif
 
 #ifndef GRN_LED_PIN
-#define GRN_LED_PIN 0
+#define GRN_LED_PIN 14
 #endif
 
 // Emit sound through buzzer

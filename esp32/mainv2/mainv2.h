@@ -16,12 +16,17 @@
 #endif
 
 #ifndef HOLDER_CAPACITY
-#define HOLDER_CAPACITY 4
+#define HOLDER_CAPACITY 1
 #endif
 
 #ifndef SOLENOID_OPEN_TIME
 #define SOLENOID_OPEN_TIME 500 // in ms
 #endif
+
+#ifndef LID_CHECK
+#define LID_CHECK 33 // GPIO 33 ESP32
+#endif
+
 
 // Connect to Wifi
 // Returns True if connected, else, false.

@@ -6,12 +6,9 @@ char* password = "5iMLKcnkLk2MGc";
 char* server_url = "http://192.168.1.143/api/recv";
 
 // Associate a solenoid with a pin, this is made to make programming less prone to errors
-short int solenoid_1 = 27;
-short int solenoid_2 = 26;
-short int solenoid_3 = 25;
-short int solenoid_4 = 33;
+short int solenoid_1 = 32;
 
-short int solenoids[HOLDER_CAPACITY] = {solenoid_1, solenoid_2, solenoid_3, solenoid_4}; // This array holds each solenoid's pin, ORDER MATTERS
+short int solenoids[HOLDER_CAPACITY] = {solenoid_1}; // This array holds each solenoid's pin, ORDER MATTERS
 
 int machine_status = 0;
 // Status codes:
@@ -20,7 +17,6 @@ int machine_status = 0;
 // 2 : Neutral (Busy)
 // -1 : Emergency Mode
 
-const int LidCheck = 0;
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
@@ -117,7 +113,7 @@ void setup() {
   SPI.begin();
   mfrc522.PCD_Init(); // Init mfcr522
   pinMode(BUZZER_PIN, OUTPUT);
-  pinMode(LidCheck, INPUT);
+  pinMode(LID_CHECK, INPUT);
   while (!Serial) {}
   
   for(int i=0; i<HOLDER_CAPACITY; i++){
@@ -145,7 +141,7 @@ void loop() {
   }
 
   // Check if lid is open
-  if (LidCheck !=1){
+  if (digitalRead(LID_CHECK)!=1){
     machine_status = -1;
   }
   

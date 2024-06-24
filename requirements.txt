@@ -1,4 +1,4 @@
 django >= 4.2.13
-Pillow
+Pillow >=5.0.0
 python-dotenv
 gunicorn>=22.0.0
