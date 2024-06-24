@@ -1,9 +1,9 @@
 #include "mainv2.h"
 #include "buzzrgb.h"
 
-char* ssid = "FPWOM";
-char* password = "NHl7g371#0";
-char* server_url = "http://192.168.100.18:8080/api/recv";
+char* ssid = "dd-wrt";
+char* password = "5iMLKcnkLk2MGc";
+char* server_url = "http://192.168.1.143/api/recv";
 
 // Associate a solenoid with a pin, this is made to make programming less prone to errors
 short int solenoid_1 = 27;
