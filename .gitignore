@@ -5,8 +5,11 @@ ProyectoMarraqueta/picow_api/migrations
 #ingnore django media folder
 ProyectoMarraqueta/media
 
-#ignore DB
 
+#ignore env
+.env
+
+#ignore DB
 *.sqlite3
 
 # Ingore vscode files
