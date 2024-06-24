@@ -1,0 +1,12 @@
+[Unit]
+Description=gunicorn daemon
+After=network.target
+
+[Service]
+User=technopy
+Group=www-data
+WorkingDirectory=/home/technopy/Ubike/ProyectoMarraqueta
+ExecStart=/home/technopy/Ubike/virtualenv/bin/gunicorn --workers 3 --log-level info --error-logfile /home/technopy/Ubike/gunicorn_logs/gunicorn-error.log --access-logfile /home/technopy/Ubike/gunicorn_logs/gunicorn-access.log -c /home/technopy/Ubike/conf/gunicorn_conf.py ProyectoMarraqueta.wsgi:application
+
+[Install]
+WantedBy=multi-user.target  

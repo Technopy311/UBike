@@ -1,0 +1,13 @@
+server {
+        listen 80;
+        server_name 192.168.1.143;
+
+        location /static/ {
+                alias /var/www/static_root/;
+                autoindex on;
+        }
+
+        location / {
+                proxy_pass http://192.168.1.143:8080/;
+        }
+}
