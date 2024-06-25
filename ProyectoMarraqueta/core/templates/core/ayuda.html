@@ -1,8 +1,10 @@
 {% extends 'core/base.html' %}
+
 {% block insertcss %} 
 {% load static %}
 <link rel="stylesheet" href="{% static 'core/css/ayuda.css' %}" />
 {% endblock %} 
+
 {% block main %}
 <main>
 	{% if msg %}
