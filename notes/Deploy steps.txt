@@ -1,11 +1,14 @@
 - Clone Repo
 - Crear virtualenviroment (virtualenv)
 - Install requirements
+- Install nginx
+- Add "client_max_body_size 100M;" to nginx.conf in http
 - Setup services (in conf folder)
 - Setup .env file (MAIN_ADDR, SECRET_KEY)
 - Setup static_root
 - Setup nginx folder at /var/www/static_root
 - Run collectstatic
 - Copy static_root to /var/www/static_root
+- Make sure media folder exists, else, create it (ProyectoMarraqueta)
 - Debug = False
 - Start gunicorn and nginx services
