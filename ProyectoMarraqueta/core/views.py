@@ -31,14 +31,14 @@ def user_view(request):
         "holder_y_coord": None,
     }
     
-    if (bicycle.holder_pk is not None) or (bicycle.is_saved):
+    if (bicycle.holder_pk is not None) and (bicycle.is_saved) and (bicycle.holder_pk!=0):
         holder = core_models.BicycleHolder.objects.get(pk=bicycle.holder_pk)
         context["holder_x_coord"] = holder.coord_x
         context["holder_y_coord"] = holder.coord_y
         context["nearby"] = holder.location
         context["status"] = True
-        context["holder"] = bicycle.holder_pk
-
+        context["holder"] = holder.pk
+    print(context)
     return render(request, 'core/vista_usuario.html', context=context)
 
 
