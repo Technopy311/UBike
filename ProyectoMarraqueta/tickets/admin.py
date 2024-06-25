@@ -4,7 +4,7 @@ from .models import RegistryTicket, EmergencyTicket
 
 class RegistryTicketAdmin(admin.ModelAdmin):
     list_display=["keychain", "solved", "datetime"]
-    fields = ["keychain"]
+    fields = ["keychain", "solved"]
     date_hierarchy = "datetime"
     readonly_fields = ["datetime"]
 
