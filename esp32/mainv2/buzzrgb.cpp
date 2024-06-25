@@ -3,7 +3,7 @@
 const int RGBpin [3] = {RED_LED_PIN, GRN_LED_PIN, BLUE_LED_PIN};
 
 void emit_sound(int freq, int times){ // Basic buzzer controller. freq means times per second, not sound wave frequency
-  freq = 500/freq;
+  freq = 800/freq;
   for (int a = 0; a<times; a++){
     digitalWrite(BUZZER_PIN, 1);
     delay(freq);
