@@ -68,6 +68,8 @@ void controller(const String& code, int slot_position){
 
 bool sendUUID(const String& uuid, const String& ip) {
   Serial.println("Sending UUID to server...");
+  Serial.print("UUID: ");
+  Serial.println(uuid);
   JSONVar dataObject;
   dataObject["uuid"] = uuid;
   dataObject["ip"] = ip;
@@ -87,7 +89,7 @@ bool sendUUID(const String& uuid, const String& ip) {
     Serial.println("UUID sent successfully");
     return true;
   } 
-  Serial.print("Failed to send UUID. Error code: ");
+  Serial.print("HTTP Error code: ");
   Serial.println(httpResponseCode);
   return false;
 }
@@ -121,6 +123,7 @@ void setup() {
   }
   
   connectToWiFi();
+  Serial.println(WiFi.localIP().toString());
 }
 
 void loop() {
