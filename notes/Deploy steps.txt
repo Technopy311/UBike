@@ -1,0 +1,11 @@
+- Clone Repo
+- Crear virtualenviroment (virtualenv)
+- Install requirements
+- Setup services (in conf folder)
+- Setup .env file (MAIN_ADDR, SECRET_KEY)
+- Setup static_root
+- Setup nginx folder at /var/www/static_root
+- Run collectstatic
+- Copy static_root to /var/www/static_root
+- Debug = False
+- Start gunicorn and nginx services
