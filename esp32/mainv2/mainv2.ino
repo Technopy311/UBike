@@ -10,14 +10,6 @@ short int solenoid_1 = 32;
 
 short int solenoids[HOLDER_CAPACITY] = {solenoid_1}; // This array holds each solenoid's pin, ORDER MATTERS
 
-int machine_status = 0;
-// Status codes:
-// 0 : Machine starting
-// 1 : Neutral (Empty)
-// 2 : Neutral (Busy)
-// -1 : Emergency Mode
-
-
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
 bool connectToWiFi() {
@@ -49,12 +41,10 @@ void open_solenoid(int slot_position){
 
 void controller(const String& code, int slot_position){
   if (code == "0.1"){ // Code to add bicycle to holder
-    machine_status = 2;
     rgb_set(1, 1, 1); // Set LED color to White
     success_buzzer_sound();
     open_solenoid(slot_position);
   } else if (code == "1.1"){ // Code to remove bicycle from holder
-    machine_status = 1;
     rgb_set(1, 1, 1); // Set LED color to White
     success_2_buzzer_sound();
     open_solenoid(slot_position);
@@ -63,6 +53,7 @@ void controller(const String& code, int slot_position){
     rgb_set(1, 1, 0); // Set LED color to Yellow
     error_buzzer_sound();
   }
+  rgb_set(0,0,0);
   delay(500); // Short delay after output message or action
 }
 
@@ -131,21 +122,9 @@ void loop() {
     rgb_set(1, 0, 0);
     connectToWiFi();
   }
-  switch (machine_status){
-    case -1:
-      rgb_set(1,0,0);
-      break;
-    case 1:
-      rgb_set(0, 1, 0);
-      break;
-    case 2:
-      rgb_set(0, 0, 1);
-      break;
-  }
-
   // Check if lid is open
   if (digitalRead(LID_CHECK)!=1){
-    machine_status = -1;
+    //MACHINE EMERGENCY
   }
   
   String uuid = readRFID();
