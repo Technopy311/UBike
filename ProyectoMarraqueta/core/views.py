@@ -5,6 +5,11 @@ from tickets import models as tickets_models
 from django.contrib.auth.decorators import login_required
 
 def welcome_view(request):
+    context = {}
+    if request.user.is_authenticated:
+        context["user"] = True
+    else:
+        context["user"] = False
     return render(request, 'core/welcome.html')
 
 
@@ -13,7 +18,7 @@ def user_view(request):
     if (request.user.is_guard is not None):
         return redirect('guard_view')
     elif request.user.is_superuser:
-        return redirect('welcome_view')
+        return redirect('guard_view')
     
     user = request.user
 
@@ -75,6 +80,35 @@ def guard_view(request): # View of security dashboard
     return render(request, 'core/security_dashboard.html', context=context)
 
 
+@login_required
+def user_detail(request, user_pk):
+    if(request.user.is_guard) or (request.user.is_superuser):
+        try:
+            user = core_models.User.objects.get(pk=user_pk)
+        except core_models.User.DoesNotExist:
+            return redirect('guard_view')
+        
+        bicycle = core_models.Bicycle.objects.get(bicy_user=user)
+        context = {
+            "run": user.run,
+            "email": user.email, 
+            "first_name": user.first_name,
+            "model": bicycle.model,
+            "colour": bicycle.colour,
+            "image_url": bicycle.image.url,
+            "status": bicycle.is_saved,
+        }
+        try:
+            holder = core_models.BicycleHolder.objects.get(pk=bicycle.holder_pk)
+            context["holder"] = True
+            context["holder_location"] = holder.nearest_building
+            context["holder_x"]= holder.coord_
+            context["holder_y"]= holder.coord_y                       
+        except core_models.BicycleHolder.DoesNotExist:
+            context['holder'] = False
+        
+        return render(request, 'core/user_details.html', context)
+            
 @login_required
 def emergency_view(request):
     if request.method == "POST":
