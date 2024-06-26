@@ -1,0 +1,91 @@
+{% extends 'core/base.html' %} {% block main %}
+<main class="py-5 my-5 container">
+
+	<!-- Sección de Datos Bicicleta -->
+	<header class="text-center mb-5">
+		<h1 class="welcome-message whitetext">Detalles del usuario</h1>
+	</header>
+	<div class="col-10 mx-auto">
+		<div class="card card-custom mb-4">
+			<div class="card-body">
+				<h3 class="mx-2 my-1">Datos de {{first_name}}</h3>
+				<div class="container my-2 p-4">
+					<div class="row my-2">
+						<div class="col"><b>Nombre:</b> {{first_name}}</div>
+						<div class="col"><b>Email:</b> {{email}}</div>
+						<div class="col"><b>RUN:</b> {{run}}</div>
+					</div>
+					<div class="row my-2">
+						<div class="col"><b>Modelo de Bicicleta:</b> {{model}}</div>
+						<div class="col"><b>Color de bicicleta:</b> {{colour}}</div>
+					</div>
+					{% if holder %}
+					<div class="row my-2">
+						<div class="card card-custom mb-4">
+							<div class="card-body">
+								<h5 class="card-title">Estado:</h5>
+								{% if status %}
+								<p class="card-text">Guardada</p>
+								{% else %
+								<p class="card-text">No guardada</p>
+								{% endif %}
+							</div>
+						</div>
+						<div class="card card-custom mb-4">
+							<div class="card-body">
+								<h5 class="card-title">Ubicación:</h5>
+								<div class="location-info">
+									<i class="bi bi-geo-alt-fill"></i>
+									<p class="card-text">
+										Bicicletero Nro. {{holder}} cerca del edificio {{holder_location}}.
+									</p>
+								</div>
+							</div>
+						</div>			
+					</div>
+					{% else %}
+					<div class="row mt-4 pt-4">
+						<p>El usuario no tiene su bicicleta guardada.</p>
+						<p>Información del bicicletero, no disponible.</p>
+					</div>
+					{% endif %}
+
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- Contenido -->
+	<div class="col-10 mx-auto">
+		{% if holder_x_coord != None %}
+        <div class="card card-custom mb-4">
+			<div class="card-body">
+				<h5 class="card-title">Mapa</h5>
+				<div id="map" style="height: 400px"></div>
+			</div>
+		</div>
+        {% endif %}
+		<div class="card card-custom mb-4">
+			<div class="card-body">
+				<h5 class="card-title">Foto de la bicicleta:</h5>
+				<img src="{{image_url}}" class="img-fluid rounded mb-3 mx-auto d-block" style="max-width: 45%; max-height: 50%;"/>
+			</div>
+		</div>
+	</div>
+</main>
+{% endblock %} 
+
+{% block insertjs %}
+{% if holder != 0 and holder_x_coord != None %}
+<script>
+
+	var map = L.map('map').setView([-33.4909888, -70.61878889], 16.5); //viewport USM's San Joaquin coordinates and zoom
+    var marker = L.marker([ {{holder_x_coord}}, {{holder_y_coord}} ]).addTo(map);
+    marker.bindPopup("<b>Tu bicicleta está aquí</b>").openPopup();
+	L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+		maxZoom: 19,
+		attribution:
+			'&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+	}).addTo(map);
+</script>
+{% endif %}
+{% endblock %}
