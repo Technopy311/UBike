@@ -126,7 +126,7 @@
 								<td>{{ bicycle.bicy_user.last_name }}</td>
 								<td>{{ bicycle.bicy_user.run }}</td>
 								<td>
-									<a href="#">Ver detalle</a>
+									<a href="{% url 'user_detail' bicycle.bicy_user.pk %}">+</a>
 								</td>
 							  </tr>
 							{% endfor %}
