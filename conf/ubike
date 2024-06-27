@@ -1,6 +1,6 @@
 server {
         listen 80;
-        server_name 192.168.1.143;
+        server_name 192.168.1.102;
 
         location /static/ {
                 alias /var/www/static_root/;
@@ -8,6 +8,6 @@ server {
         }
 
         location / {
-                proxy_pass http://192.168.1.143:8080/;
+                proxy_pass http://192.168.1.102:8080/;
         }
 }
