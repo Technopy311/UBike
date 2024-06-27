@@ -10,6 +10,7 @@
 
 		<div class="row my-2 mx-auto">
 			<form class="container-fluid" action="{% url 'guard_view' %}" method="post">
+				{% csrf_token %}
 				<div class="input-group">
 					<span class="input-group-text" id="basic-addon1">
 						<svg
@@ -65,6 +66,7 @@
 								<th scope="col">Rut</th>
 								<th scope="col">Modelo</th>
 								<th scope="col">Color</th>
+								<th scope="col">Detalle</th>
 							  </tr>
 							</thead>
 							<tbody>
@@ -78,6 +80,9 @@
 								{% for bicycle in user.bicycle_set.all %}
 								<td>{{ bicycle.model }}</td>
 								<td>{{ bicycle.colour }}</td>
+								<td>
+									<a href="{% url 'user_detail' bicycle.bicy_user.pk %}">+</a>
+								</td>
 								{% endfor %}
 							  </tr>
 							{% endfor %}
