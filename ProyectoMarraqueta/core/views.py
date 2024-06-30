@@ -60,12 +60,13 @@ def guard_view(request): # View of security dashboard
             
             search_query = request.POST["search_bicycle_info"]
             try:
-                search_result = core_models.User.objects.get(
+                search_result = core_models.User.objects.filter(
                     Q(run__icontains=search_query) | Q(username__icontains=search_query) | Q(email__icontains=search_query) | Q(last_name__icontains=search_query)
-                )
-                context["search_results"] = [search_result]
+                ).exclude()
+                context["search_results"] = search_result
             except core_models.User.DoesNotExist:
                 context["search_results"] = None
+                print("No data found")
 
         try:
             latest_bicycles = core_models.Bicycle.objects.all()[:5]
