@@ -13,15 +13,15 @@ void emit_sound(int freq, int times){ // Basic buzzer controller. freq means tim
 }
 
 void success_buzzer_sound(){ // Make sound a nice pleasing sound that indicates all is fine
-  emit_sound(1, 1);
+  emit_sound(6, 3);
 }
 
 void success_2_buzzer_sound(){ // Make sound another nice pleasing sound that indicates all is fine
-  emit_sound(2, 2);
+  emit_sound(4, 2);
 }
 
 void error_buzzer_sound(){ // Make sounde a not nice sound that indicates something is wrong
-  emit_sound(4, 4);
+  emit_sound(3, 4);
 }
 void rgb_set(int R, int G, int B){ // Set the color of the RGB Led diode
   digitalWrite(RGBpin[0], R);

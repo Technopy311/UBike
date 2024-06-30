@@ -15,14 +15,6 @@
 #define SS_PIN 21 // GPIO 21 ESP32
 #endif
 
-#ifndef HOLDER_CAPACITY
-#define HOLDER_CAPACITY 1
-#endif
-
-#ifndef SOLENOID_OPEN_TIME
-#define SOLENOID_OPEN_TIME 500 // in ms
-#endif
-
 #ifndef LID_CHECK
 #define LID_CHECK 33 // GPIO 33 ESP32
 #endif

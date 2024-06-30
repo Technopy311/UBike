@@ -3,12 +3,8 @@
 
 char* ssid = "dd-wrt";
 char* password = "5iMLKcnkLk2MGc";
-char* server_url = "http://192.168.1.143/api/recv";
+char* server_url = "http://192.168.1.102/api/recv";
 
-// Associate a solenoid with a pin, this is made to make programming less prone to errors
-short int solenoid_1 = 32;
-
-short int solenoids[HOLDER_CAPACITY] = {solenoid_1}; // This array holds each solenoid's pin, ORDER MATTERS
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
@@ -31,23 +27,13 @@ bool connectToWiFi() {
 }
 
 
-void open_solenoid(int slot_position){
-  Serial.print("\tOpening slot: " + String(slot_position)+ "\n");
-  digitalWrite(solenoids[slot_position], 1);
-  delay(SOLENOID_OPEN_TIME);
-  digitalWrite(solenoids[slot_position], LOW);
-  Serial.print("\tSlot closed\n");
-  }
-
 void controller(const String& code, int slot_position){
   if (code == "0.1"){ // Code to add bicycle to holder
     rgb_set(1, 1, 1); // Set LED color to White
     success_buzzer_sound();
-    open_solenoid(slot_position);
   } else if (code == "1.1"){ // Code to remove bicycle from holder
     rgb_set(1, 1, 1); // Set LED color to White
     success_2_buzzer_sound();
-    open_solenoid(slot_position);
   } else{
     Serial.print("No bicycle change.\n");
     rgb_set(1, 1, 0); // Set LED color to Yellow
@@ -109,12 +95,9 @@ void setup() {
   pinMode(LID_CHECK, INPUT);
   while (!Serial) {}
   
-  for(int i=0; i<HOLDER_CAPACITY; i++){
-    pinMode(solenoids[i], OUTPUT); // Set every solenoid pin as OUTPUT
-  }
-  
   connectToWiFi();
   Serial.println(WiFi.localIP().toString());
+ emit_sound(10, 3); 
 }
 
 void loop() {
@@ -123,13 +106,11 @@ void loop() {
     connectToWiFi();
   }
   // Check if lid is open
-  if (digitalRead(LID_CHECK)!=1){
+  //if (digitalRead(LID_CHECK)!=1){
     //MACHINE EMERGENCY
-  }
-  
+  //}
   String uuid = readRFID();
   if (uuid != "") {
-    emit_sound(4, 1); // Short sound to notify the user that the tag has been scaned
     String ip = WiFi.localIP().toString();
     if (sendUUID(uuid, ip)) {
       delay(200); // Delay to avoid sending data too frequently
