@@ -39,8 +39,7 @@ void controller(const String& code, int slot_position){
     rgb_set(1, 1, 0); // Set LED color to Yellow
     error_buzzer_sound();
   }
-  rgb_set(0,0,0);
-  delay(500); // Short delay after output message or action
+  delay(1000); // Short delay after output message or action
 }
 
 bool sendUUID(const String& uuid, const String& ip) {
@@ -89,15 +88,16 @@ String readRFID() {
 
 void setup() {
   Serial.begin(115200);
+  init_periferals();
   SPI.begin();
   mfrc522.PCD_Init(); // Init mfcr522
-  pinMode(BUZZER_PIN, OUTPUT);
   pinMode(LID_CHECK, INPUT);
   while (!Serial) {}
   
   connectToWiFi();
   Serial.println(WiFi.localIP().toString());
- emit_sound(10, 3); 
+  rgb_set(0, 1, 0);
+  emit_sound(10, 3); 
 }
 
 void loop() {
@@ -109,12 +109,16 @@ void loop() {
   //if (digitalRead(LID_CHECK)!=1){
     //MACHINE EMERGENCY
   //}
-  String uuid = readRFID();
-  if (uuid != "") {
-    String ip = WiFi.localIP().toString();
-    if (sendUUID(uuid, ip)) {
-      delay(200); // Delay to avoid sending data too frequently
+  else{
+    rgb_set(0, 1, 0);
+    String uuid = readRFID();
+    if (uuid != "") {
+      rgb_set(0, 1, 1);
+      String ip = WiFi.localIP().toString();
+      if (sendUUID(uuid, ip)) {
+        delay(200); // Delay to avoid sending data too frequently
+      }
+      delay(20); // Delay between RFID scans
     }
   }
-  delay(20); // Delay between RFID scans
 }

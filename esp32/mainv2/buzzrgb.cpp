@@ -33,7 +33,7 @@ void init_periferals(){
   for(int i=0; i<3; i++){
     pinMode(RGBpin[i], OUTPUT); // Set every LED pin as OUTPUT
   }
-  
+  pinMode(BUZZER_PIN, OUTPUT);
   rgb_set(1, 1, 1);
   emit_sound(2, 1);
 }
