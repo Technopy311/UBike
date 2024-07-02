@@ -105,6 +105,7 @@ def user_detail(request, user_pk):
             context["holder_location"] = holder.nearest_building
             context["holder_x"]= holder.coord_x
             context["holder_y"]= holder.coord_y                       
+            context["pk"] = holder.pk
         except core_models.BicycleHolder.DoesNotExist:
             context['holder'] = False
         
